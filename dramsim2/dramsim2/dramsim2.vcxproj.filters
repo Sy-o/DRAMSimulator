@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{36f7bfe3-7c5b-42f2-9ae6-63268d538bd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Refresh">
+      <UniqueIdentifier>{5a52f2c5-564f-42c4-ae3b-fa7bfda1ff42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Defects">
+      <UniqueIdentifier>{1f15d4c9-44e2-4c26-91cf-792959da2329}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Bank.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="BankState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="BusPacket.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DataPacket.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="IniReader.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryController.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MemorySystem.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Rank.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulatorObject.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TraceBasedSim.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Transaction.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TestingSystem.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Discharger.cpp">
+      <Filter>General\Defects</Filter>
+    </ClCompile>
+    <ClCompile Include="SAODCController.cpp">
+      <Filter>General\Refresh</Filter>
+    </ClCompile>
+    <ClCompile Include="AddressTranslator.cpp">
+      <Filter>General\Refresh</Filter>
+    </ClCompile>
+    <ClCompile Include="MarchTestController.cpp">
+      <Filter>General\Refresh</Filter>
+    </ClCompile>
+    <ClCompile Include="RegenerationController.cpp">
+      <Filter>General\Refresh</Filter>
+    </ClCompile>
+    <ClCompile Include="DRAMDevice.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="FaultController.cpp">
+      <Filter>General\Defects</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bank.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="BankState.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="BusPacket.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Callback.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DataPacket.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DRAMSim.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="IniReader.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryController.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySystem.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintMacros.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Rank.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulatorObject.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemConfiguration.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Transaction.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceBasedSim.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TestingSystem.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Discharger.h">
+      <Filter>General\Defects</Filter>
+    </ClInclude>
+    <ClInclude Include="MarchDef.h">
+      <Filter>General\Refresh</Filter>
+    </ClInclude>
+    <ClInclude Include="SAODCController.h">
+      <Filter>General\Refresh</Filter>
+    </ClInclude>
+    <ClInclude Include="AddressTranslator.h">
+      <Filter>General\Refresh</Filter>
+    </ClInclude>
+    <ClInclude Include="MarchTestController.h">
+      <Filter>General\Refresh</Filter>
+    </ClInclude>
+    <ClInclude Include="RegenerationController.h">
+      <Filter>General\Refresh</Filter>
+    </ClInclude>
+    <ClInclude Include="DRAMDevice.h">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="FaultController.h">
+      <Filter>General\Defects</Filter>
+    </ClInclude>
+    <ClInclude Include="FaultDef.h">
+      <Filter>General\Defects</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

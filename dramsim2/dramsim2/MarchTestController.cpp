@@ -1,0 +1,149 @@
+#include "MarchTestController.h"
+#include "SystemConfiguration.h"
+#include <iostream>
+
+MarchTestController::MarchTestController()
+{
+	dramDevice = 0;
+}
+
+MarchTestController::~MarchTestController()
+{}
+
+void MarchTestController::Initialize(int marchTest, DRAMDevice* dram)
+{
+	phases.clear();
+	dramDevice = dram;
+
+	switch (marchTest)
+	{
+	case MARCH_C:
+	{
+		phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+		phases.push_back({ MD_UP, { MO_RDC, MO_WD } });
+		phases.push_back({ MD_DOWN, { MO_RD, MO_WDC } });
+		phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
+		phases.push_back({ MD_DOWN, { MO_RD } });
+		break;
+	}
+	case MARCH_B:
+	{
+		phases.push_back({ MD_UP, { MO_RD, MO_WDC, MO_RDC, MO_WD, MO_RD, MO_WDC } });
+		phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
+		phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
+		phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
+		phases.push_back({ MD_DOWN, { MO_RD } });
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void MarchTestController::RunTest(int refSignature)
+{
+	Reset();
+	state.testStarted = true;
+	saodc.SetRefSignature(refSignature);
+}
+
+void MarchTestController::Update()
+{
+	if (!state.testStarted)
+		return;
+
+    saodc.ClearTestSig();
+
+	MarchPhase& phase = phases[state.phase];
+
+	int addrStart = 0;
+	int counter = 0;
+
+	int bottom = 0;
+	int top = NUM_BANKS * NUM_COLS * NUM_ROWS - 1;
+
+	if (phase.direction == MD_UP || phase.direction == MD_BOTH)
+	{
+		addrStart = bottom;
+		counter = 1;
+	}
+	else if (phase.direction == MD_DOWN)
+	{
+		addrStart = top;
+		counter = -1;
+	}
+
+	for (int addr = addrStart; addr >= bottom && addr <= top; addr += counter)
+	{
+		uint16_t buffer = 0;
+		for (auto& el : phase.elements)
+		{
+			RunElement(el, addr, buffer);
+		}
+	}
+
+	int err = saodc.GetSignaturesSum();
+	if (err)
+	{
+		state.testPassed = false;
+        cout << "[MarchTest] Errors are detected while running phase!\n      Signature sum is " << (err>>1) << "(" << addrTranslator.GetDescription(err, true) << ")" << endl;
+	}
+
+	state.phase++;
+	if (state.phase == phases.size())
+	{
+		state.testCompleted = true;
+		state.testStarted = false;
+	}
+}
+
+void MarchTestController::RunElement(int element, int address, uint16_t &buffer)
+{
+	int r = 0, b = 0, row = 0, col = 0;
+	addrTranslator.Translate(address, r, b, row, col);
+	uint16_t data = 0;
+
+	switch (element)
+	{
+	case MO_RD:
+		data = dramDevice->read(r, b, row, col);
+		buffer = data;
+		break;
+	case MO_RDC:
+		data = dramDevice->read(r, b, row, col);
+		buffer = ~data;
+		break;
+	case MO_WD:
+		dramDevice->write(r, b, row, col, buffer);
+		break;
+	case MO_WDC:
+		dramDevice->write(r, b, row, col, ~buffer);
+		break;
+	}
+
+	//convertData
+	if (element == MO_RD || element == MO_RDC)
+	{
+		saodc.UpdateTestSig(r, b, row, col, data);
+	}
+}
+
+bool MarchTestController::TestCompleted()
+{
+	return state.testCompleted;
+}
+
+bool MarchTestController::TestPassed()
+{
+	return state.testPassed;
+}
+
+void MarchTestController::Reset()
+{
+	state.testStarted = false;
+	state.testPassed = true;
+	state.testCompleted = false;
+	state.phase = 0;
+	saodc.ClearTestSig();
+}
+

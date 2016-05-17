@@ -1,0 +1,61 @@
+﻿Build started 23.04.2016 16:16:06.
+     1>Project "C:\Simulators\dramsim2_win\dramsim2\dramsim2\dramsim2.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt MemoryController.cpp Rank.cpp
+         MemoryController.cpp
+     1>MemoryController.cpp(270): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>MemoryController.cpp(278): warning C4018: '<=' : signed/unsigned mismatch
+     1>MemoryController.cpp(698): warning C4244: 'argument' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(876): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(881): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(886): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(891): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(899): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(904): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(909): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(914): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(922): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(927): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(932): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(937): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(945): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(950): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(955): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(960): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(969): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(974): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(979): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(984): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(994): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(999): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(1004): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(1009): warning C4244: '=' : conversion from 'uint64_t' to 'unsigned int', possible loss of data
+     1>MemoryController.cpp(1051): warning C4244: 'initializing' : conversion from 'float' to 'uint64_t', possible loss of data
+         Rank.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Simulators\dramsim2_win\dramsim2\Release\dramsim2.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Simulators\dramsim2_win\dramsim2\Release\dramsim2.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Simulators\dramsim2_win\dramsim2\Release\dramsim2.lib" /MACHINE:X86 /SAFESEH Release\AddressTranslator.obj
+         Release\Bank.obj
+         Release\BankState.obj
+         Release\BusPacket.obj
+         Release\CommandQueue.obj
+         Release\DataPacket.obj
+         Release\Discharger.obj
+         Release\IniReader.obj
+         Release\main.obj
+         Release\MemoryController.obj
+         Release\MemorySystem.obj
+         Release\Parsing.obj
+         Release\Rank.obj
+         Release\SAODCController.obj
+         Release\SimulatorObject.obj
+         Release\TestingSystem.obj
+         Release\TraceBasedSim.obj
+         Release\Transaction.obj
+         Generating code
+         Finished generating code
+         dramsim2.vcxproj -> C:\Simulators\dramsim2_win\dramsim2\Release\dramsim2.exe
+     1>Done Building Project "C:\Simulators\dramsim2_win\dramsim2\dramsim2\dramsim2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.40

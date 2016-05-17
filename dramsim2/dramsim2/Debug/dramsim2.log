@@ -1,0 +1,34 @@
+﻿Build started 17.05.2016 23:35:09.
+     1>Project "D:\diploma\Alice\dramsim2_win\dramsim2\dramsim2\dramsim2.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D CODE_ANALYSIS /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D DEBUG_BUILD /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze /analyze:plugin"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\\bin\localespc.dll" /errorReport:prompt   /analyze:quiet DRAMDevice.cpp
+         DRAMDevice.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\diploma\Alice\dramsim2_win\dramsim2\Debug\dramsim2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\diploma\Alice\dramsim2_win\dramsim2\Debug\dramsim2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\diploma\Alice\dramsim2_win\dramsim2\Debug\dramsim2.lib" /MACHINE:X86 Debug\AddressTranslator.obj
+         Debug\Bank.obj
+         Debug\BankState.obj
+         Debug\BusPacket.obj
+         Debug\CommandQueue.obj
+         Debug\DataPacket.obj
+         Debug\Discharger.obj
+         Debug\DRAMDevice.obj
+         Debug\FaultController.obj
+         Debug\IniReader.obj
+         Debug\main.obj
+         Debug\MarchTestController.obj
+         Debug\MemoryController.obj
+         Debug\MemorySystem.obj
+         Debug\Parsing.obj
+         Debug\Rank.obj
+         Debug\RegenerationController.obj
+         Debug\SAODCController.obj
+         Debug\SimulatorObject.obj
+         Debug\TestingSystem.obj
+         Debug\TraceBasedSim.obj
+         Debug\Transaction.obj
+         dramsim2.vcxproj -> D:\diploma\Alice\dramsim2_win\dramsim2\Debug\dramsim2.exe
+     1>Done Building Project "D:\diploma\Alice\dramsim2_win\dramsim2\dramsim2\dramsim2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:09.61
