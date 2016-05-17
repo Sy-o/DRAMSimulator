@@ -25,6 +25,6 @@ libdramsim.so
 *.exe
 *.out
 *.app
-dramsim2\.vs\
+dramsim2/.vs/
 Release\
 Debug\
