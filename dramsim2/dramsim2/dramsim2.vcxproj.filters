@@ -10,6 +10,9 @@
     <Filter Include="General\Defects">
       <UniqueIdentifier>{1f15d4c9-44e2-4c26-91cf-792959da2329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\Common">
+      <UniqueIdentifier>{283d015e-ea9e-4738-b8f6-4e7b184c791a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bank.cpp">
@@ -48,9 +51,6 @@
     <ClCompile Include="Transaction.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Parsing.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -61,9 +61,6 @@
       <Filter>General\Defects</Filter>
     </ClCompile>
     <ClCompile Include="SAODCController.cpp">
-      <Filter>General\Refresh</Filter>
-    </ClCompile>
-    <ClCompile Include="AddressTranslator.cpp">
       <Filter>General\Refresh</Filter>
     </ClCompile>
     <ClCompile Include="MarchTestController.cpp">
@@ -77,6 +74,15 @@
     </ClCompile>
     <ClCompile Include="FaultController.cpp">
       <Filter>General\Defects</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing.cpp">
+      <Filter>General\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Address.cpp">
+      <Filter>General\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="AddressTranslator.cpp">
+      <Filter>General\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,9 +131,6 @@
     <ClInclude Include="Transaction.h">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Parsing.h">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="TraceBasedSim.h">
       <Filter>General</Filter>
     </ClInclude>
@@ -141,9 +144,6 @@
       <Filter>General\Refresh</Filter>
     </ClInclude>
     <ClInclude Include="SAODCController.h">
-      <Filter>General\Refresh</Filter>
-    </ClInclude>
-    <ClInclude Include="AddressTranslator.h">
       <Filter>General\Refresh</Filter>
     </ClInclude>
     <ClInclude Include="MarchTestController.h">
@@ -160,6 +160,15 @@
     </ClInclude>
     <ClInclude Include="FaultDef.h">
       <Filter>General\Defects</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing.h">
+      <Filter>General\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Address.h">
+      <Filter>General\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AddressTranslator.h">
+      <Filter>General\Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,4 +34,9 @@
 #include "Transaction.h"
 #include "SystemConfiguration.h"
 
+#include "FaultDef.h"
+#include <vector>
+
 DRAMSim::DataPacket* parseTraceFileLine(std::string &line, uint64_t &addr, enum DRAMSim::TransactionType &transType, uint64_t &clockCycle, TraceType type);
+
+std::vector<Fault> ParseCSV(std::string filePath);

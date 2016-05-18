@@ -30,7 +30,7 @@ void RegenerationController::StartRefresh()
     int err = saodcController.CalculateTestAndCompare();
     if (err)
 	{
-        std::cout << "[Regeneration Controller] Detected error(s) in memory.\n      Signature Sum = " << (err>>1) << "(" << addrTranslator.GetDescription(err, true) << ")" << std::endl;
+        std::cout << "[Regeneration Controller] Detected error(s) in memory.\n      Signature Sum = " << (err>>1) << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << std::endl;
         if (lastError)
         {
             needTest = true;
@@ -49,9 +49,8 @@ void RegenerationController::StartRefresh()
 				//if it first time - let's decide that it was 1 error. Invert bit
 				lastError = err;
 				std::cout << "[Regeneration Controller] Try to restore the damaged cell." << std::endl;
-				int r = 0, b = 0, row = 0, col = 0, bit = 0;
-				addrTranslator.Translate(err >> 1, r, b, row, col, bit);
-				dramDevice->invertBit(r, b, row, col, bit);
+				Address addr(err >> 1, true);
+				dramDevice->invertBit(addr);
 			}
         }		
 	}

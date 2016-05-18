@@ -44,6 +44,7 @@
 
 #include "SystemConfiguration.h"
 #include "DataPacket.h"
+#include "Address.h"
 
 namespace DRAMSim
 {
@@ -64,15 +65,13 @@ class BusPacket
 public:
 	//Fields
 	BusPacketType busPacketType;
-	unsigned column;
-	unsigned row;
-	unsigned bank;
-	unsigned rank;
+	Address address;
 	uint64_t physicalAddress;
 	std::auto_ptr<DataPacket> data;
 
 	//Functions
 	BusPacket(BusPacketType packtype, uint64_t physicalAddr, unsigned col, unsigned rw, unsigned r, unsigned b, DataPacket *dat);
+	BusPacket(BusPacketType packtype, uint64_t physicalAddr, Address addr, DataPacket *dat);
 
 	void print();
 	void print(uint64_t currentClockCycle, bool dataStart);

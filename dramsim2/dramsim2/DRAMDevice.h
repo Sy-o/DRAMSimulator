@@ -4,6 +4,7 @@
 #include "Rank.h"
 #include "Discharger.h"
 #include "FaultController.h"
+#include "Address.h"
 
 using namespace DRAMSim;
 
@@ -31,9 +32,9 @@ namespace DRAMSim
 		void dischargeCells(int cycleCount, int rank);
 
 	public:
-		uint16_t read(int r, int b, int row, int col);
-		void write(int r, int b, int row, int col, uint16_t data);
-		void invertBit(int r, int b, int row, int col, int bit);
+		uint16_t read(Address addr);
+		void write(Address addr, uint16_t data);
+		void invertBit(Address addr);
 
 	private:
 		vector<Rank> *ranks;

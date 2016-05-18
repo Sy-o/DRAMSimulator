@@ -67,50 +67,50 @@ void Bank::initialize()
 
 void Bank::write(const BusPacket *busPacket)
 {
-    write(busPacket->row, busPacket->column, busPacket->data->getData());
+    write(busPacket->address, busPacket->data->getData());
     cout << "[DPKT] Rank receiving <-- : " <<*(busPacket->data) << endl;
 }
 
-void Bank::write(int row, int col, int data)
+void Bank::write(Address addr, int data)
 {
-    (*rowEntries[row])[col] = (uint16_t)data;
+    (*rowEntries[addr.row])[addr.col] = (uint16_t)data;
 }
 
-void Bank::writeBit(int row, int col, int bit, bool set)
+void Bank::writeBit(Address addr, bool set)
 {
-	auto row_ = rowEntries[row].get();
+	auto row_ = rowEntries[addr.row].get();
 
     if (set)
-        (*row_)[col] |= 1 << bit;
+		(*row_)[addr.col] |= 1 << addr.bit;
 	else
 	{
-		if ((*row_)[col] & (1 << bit))
-			(*row_)[col] ^= 1 << bit;
+		if ((*row_)[addr.col] & (1 << addr.bit))
+			(*row_)[addr.col] ^= 1 << addr.bit;
 	}
 }
 
-void Bank::invertBit(int row, int col, int bit)
+void Bank::invertBit(Address addr)
 {
-    auto row_ = rowEntries[row].get();
+	auto row_ = rowEntries[addr.row].get();
 
-    if ((*row_)[col] & (1 << bit)) //bit is '1'
+	if ((*row_)[addr.col] & (1 << addr.bit)) //bit is '1'
     {
-        (*row_)[col] ^= 1 << bit;
+		(*row_)[addr.col] ^= 1 << addr.bit;
     }     
     else
     {
-        (*row_)[col] |= 1 << bit;
+		(*row_)[addr.col] |= 1 << addr.bit;
     }
 }
 
-uint16_t Bank::read(int row, int col)
+uint16_t Bank::read(Address addr)
 {
-    return (*rowEntries[row])[col];
+	return (*rowEntries[addr.row])[addr.col];
 }
 
 void Bank::read(BusPacket *busPacket)
 {
-    uint16_t value = read(busPacket->row, busPacket->column);
+    uint16_t value = read(busPacket->address);
     busPacket->data.reset(new DataPacket(value, busPacket->physicalAddress));   
     busPacket->busPacketType = DATA;
     cout << "[DPKT] Rank returning --> : " <<*(busPacket->data) << endl;	

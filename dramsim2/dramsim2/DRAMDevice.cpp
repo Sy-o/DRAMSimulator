@@ -42,18 +42,11 @@ void DRAMDevice::update()
 	}
 
 	/*if (currentClockCycle == 2500)
-		(*ranks)[0].banks[5].writeBit(1004, 14, 5, true);
-	if (currentClockCycle == 2501)
-		(*ranks)[0].banks[5].writeBit(10, 13, 2, true);
-	if (currentClockCycle == 2502)
-		(*ranks)[0].banks[0].writeBit(0, 0, 0, true);*/
-
-	if (currentClockCycle == 2500)
 		(*ranks)[0].banks[0].writeBit(0, 0, 1, true);
 	if (currentClockCycle == 2501)
 		(*ranks)[0].banks[0].writeBit(0, 0, 3, true);
 	if (currentClockCycle == 2502)
-		(*ranks)[0].banks[0].writeBit(0, 0, 6, true);
+		(*ranks)[0].banks[0].writeBit(0, 0, 6, true);*/
 }
 
 void DRAMDevice::step()
@@ -74,23 +67,23 @@ void DRAMDevice::receiveFromBus(BusPacket *packet)
 	//}
 	//else
 	{
-		(*ranks)[packet->rank].receiveFromBus(packet);
+		(*ranks)[packet->address.rank].receiveFromBus(packet);
 	}
 }
 
-uint16_t DRAMDevice::read(int r, int b, int row, int col)
+uint16_t DRAMDevice::read(Address addr)
 {
-	return (*ranks)[r].banks[b].read(row, col);
+	return (*ranks)[addr.rank].banks[addr.bank].read(addr);
 }
 
-void DRAMDevice::write(int r, int b, int row, int col, uint16_t data)
+void DRAMDevice::write(Address addr, uint16_t data)
 {
-	(*ranks)[r].banks[b].write(row, col, data);
+	(*ranks)[addr.rank].banks[addr.bank].write(addr, data);
 }
 
-void DRAMDevice::invertBit(int r, int b, int row, int col, int bit)
+void DRAMDevice::invertBit(Address addr)
 {
-	(*ranks)[r].banks[b].invertBit(row, col, bit);
+	(*ranks)[addr.rank].banks[addr.bank].invertBit(addr);
 }
 
 void DRAMDevice::setRefreshWaitingFlag(int rank)

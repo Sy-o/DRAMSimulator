@@ -23,21 +23,21 @@ void SAODCController::UpdateRef(BusPacket* packet)
 {
     if (packet->busPacketType == DATA)
     {
-		uint16_t oldData = dramDevice->read(packet->rank, packet->bank, packet->row, packet->column);
+		uint16_t oldData = dramDevice->read(packet->address);
         uint16_t newData = packet->data->getData();
        if (oldData != newData)
-            UpdateRef(packet->rank, packet->bank, packet->row, packet->column, newData ^ oldData);
+            UpdateRef(packet->address, newData ^ oldData);
     }
 }
 
-void SAODCController::UpdateRef(int rank, int bank, int row, int col, uint16_t data)
+void SAODCController::UpdateRef(Address addr, uint16_t data)
 {
-	RefSignature ^= GetAddress(rank, bank, row, col, data);
+	RefSignature ^= GetAddress(addr, data);
 }
 
-void SAODCController::UpdateTestSig(int rank, int bank, int row, int col, uint16_t data)
+void SAODCController::UpdateTestSig(Address addr, uint16_t data)
 {
-	TestSignature ^= GetAddress(rank, bank, row, col, data);
+	TestSignature ^= GetAddress(addr, data);
 }
 
 int SAODCController::GetSignaturesSum()
@@ -45,7 +45,7 @@ int SAODCController::GetSignaturesSum()
 	return TestSignature ^ RefSignature;
 }
 
-int SAODCController::GetAddress(int rank, int bank, int row, int col, uint16_t data)
+int SAODCController::GetAddress(Address addr, uint16_t data)
 {
     //get 'bit address sum'
 	if (!data) return 0;
@@ -62,14 +62,14 @@ int SAODCController::GetAddress(int rank, int bank, int row, int col, uint16_t d
     }
 
     if (bitCount % 2 == 0)
-    {
-        rank = bank = row = col = 0;
-    }
-	int address = translator.TranslateToAddr(rank, bank, row, col, bitSum);
+		addr.Clear();
+    
+	addr.bit = bitSum;
+	int address = addr.GetPhysical();
+
 	if (bitCount % 2 != 0)
-	{
 		AddParityBit(address);
-	}
+	
 	return address;
 }
 
@@ -84,8 +84,9 @@ int SAODCController::CalculateTestAndCompare()
 			{
 				for (int col = 0; col < NUM_COLS; col++)
 				{
-					uint16_t data = dramDevice->read(r, b, row, col);
-					UpdateTestSig(r, b, row, col, data);
+					Address addr(r, b, row, col);
+					uint16_t data = dramDevice->read(addr);
+					UpdateTestSig(addr, data);
 				}
 			}
 		}

@@ -92,9 +92,9 @@ void Rank::receiveFromBus(BusPacket *packet)
 	{
 	case READ:
 		//make sure a read is allowed
-		if (bankStates[packet->bank].currentBankState != RowActive ||
-		        currentClockCycle < bankStates[packet->bank].nextRead ||
-		        packet->row != bankStates[packet->bank].openRowAddress)
+		if (bankStates[packet->address.bank].currentBankState != RowActive ||
+			currentClockCycle < bankStates[packet->address.bank].nextRead ||
+			packet->address.row != bankStates[packet->address.bank].openRowAddress)
 		{
 			packet->print();
 			ERROR_("== Error - Rank " << id << " received a READ when not allowed");
@@ -102,7 +102,7 @@ void Rank::receiveFromBus(BusPacket *packet)
 		}
 
 		//update state table
-		bankStates[packet->bank].nextPrecharge = max(bankStates[packet->bank].nextPrecharge, currentClockCycle + READ_TO_PRE_DELAY);
+		bankStates[packet->address.bank].nextPrecharge = max(bankStates[packet->address.bank].nextPrecharge, currentClockCycle + READ_TO_PRE_DELAY);
 		for (size_t i=0;i<NUM_BANKS;i++)
 		{
 			bankStates[i].nextRead = max(bankStates[i].nextRead, currentClockCycle + max(tCCD, BL/2));
@@ -112,7 +112,7 @@ void Rank::receiveFromBus(BusPacket *packet)
 		//get the read data and put it in the storage which delays until the appropriate time (RL)
 #ifndef NO_STORAGE
 		DEBUG("~   current cloclCycle: " << dec << currentClockCycle << "   ~");
-		banks[packet->bank].read(packet);
+		banks[packet->address.bank].read(packet);
 #else
 		packet->data = new DataPacket(); 
 		packet->busPacketType = DATA;
@@ -122,17 +122,17 @@ void Rank::receiveFromBus(BusPacket *packet)
 		break;
 	case READ_P:
 		//make sure a read is allowed
-		if (bankStates[packet->bank].currentBankState != RowActive ||
-		        currentClockCycle < bankStates[packet->bank].nextRead ||
-		        packet->row != bankStates[packet->bank].openRowAddress)
+		if (bankStates[packet->address.bank].currentBankState != RowActive ||
+			currentClockCycle < bankStates[packet->address.bank].nextRead ||
+			packet->address.row != bankStates[packet->address.bank].openRowAddress)
 		{
 			ERROR_("== Error - Rank " << id << " received a READ_P when not allowed");
 			exit(-1);
 		}
 
 		//update state table
-		bankStates[packet->bank].currentBankState = Idle;
-		bankStates[packet->bank].nextActivate = max(bankStates[packet->bank].nextActivate, currentClockCycle + READ_AUTOPRE_DELAY);
+		bankStates[packet->address.bank].currentBankState = Idle;
+		bankStates[packet->address.bank].nextActivate = max(bankStates[packet->address.bank].nextActivate, currentClockCycle + READ_AUTOPRE_DELAY);
 		for (size_t i=0;i<NUM_BANKS;i++)
 		{
 			//will set next read/write for all banks - including current (which shouldnt matter since its now idle)
@@ -143,7 +143,7 @@ void Rank::receiveFromBus(BusPacket *packet)
 		//get the read data and put it in the storage which delays until the appropriate time (RL)
 #ifndef NO_STORAGE
 		DEBUG("~   current cloclCycle: " << dec << currentClockCycle << "   ~");
-		banks[packet->bank].read(packet);
+		banks[packet->address.bank].read(packet);
 #else
 		packet->data = new DataPacket(); 
 		packet->busPacketType = DATA;
@@ -154,17 +154,17 @@ void Rank::receiveFromBus(BusPacket *packet)
 		break;
 	case WRITE:
 		//make sure a write is allowed
-		if (bankStates[packet->bank].currentBankState != RowActive ||
-		        currentClockCycle < bankStates[packet->bank].nextWrite ||
-		        packet->row != bankStates[packet->bank].openRowAddress)
+		if (bankStates[packet->address.bank].currentBankState != RowActive ||
+			currentClockCycle < bankStates[packet->address.bank].nextWrite ||
+			packet->address.row != bankStates[packet->address.bank].openRowAddress)
 		{
 			ERROR_("== Error - Rank " << id << " received a WRITE when not allowed");
-			bankStates[packet->bank].print();
+			bankStates[packet->address.bank].print();
 			exit(0);
 		}
 
 		//update state table
-		bankStates[packet->bank].nextPrecharge = max(bankStates[packet->bank].nextPrecharge, currentClockCycle + WRITE_TO_PRE_DELAY);
+		bankStates[packet->address.bank].nextPrecharge = max(bankStates[packet->address.bank].nextPrecharge, currentClockCycle + WRITE_TO_PRE_DELAY);
 		for (size_t i=0;i<NUM_BANKS;i++)
 		{
 			bankStates[i].nextRead = max(bankStates[i].nextRead, currentClockCycle + WRITE_TO_READ_DELAY_B);
@@ -172,24 +172,24 @@ void Rank::receiveFromBus(BusPacket *packet)
 		}
 
 		//take note of where data is going when it arrives
-		incomingWriteBank = packet->bank;
-		incomingWriteRow = packet->row;
-		incomingWriteColumn = packet->column;
+		incomingWriteBank = packet->address.bank;
+		incomingWriteRow = packet->address.row;
+		incomingWriteColumn = packet->address.col;
 		delete(packet);
 		break;
 	case WRITE_P:
 		//make sure a write is allowed
-		if (bankStates[packet->bank].currentBankState != RowActive ||
-		        currentClockCycle < bankStates[packet->bank].nextWrite ||
-		        packet->row != bankStates[packet->bank].openRowAddress)
+		if (bankStates[packet->address.bank].currentBankState != RowActive ||
+			currentClockCycle < bankStates[packet->address.bank].nextWrite ||
+			packet->address.row != bankStates[packet->address.bank].openRowAddress)
 		{
 			ERROR_("== Error - Rank " << id << " received a WRITE_P when not allowed");
 			exit(0);
 		}
 
 		//update state table
-		bankStates[packet->bank].currentBankState = Idle;
-		bankStates[packet->bank].nextActivate = max(bankStates[packet->bank].nextActivate, currentClockCycle + WRITE_AUTOPRE_DELAY);
+		bankStates[packet->address.bank].currentBankState = Idle;
+		bankStates[packet->address.bank].nextActivate = max(bankStates[packet->address.bank].nextActivate, currentClockCycle + WRITE_AUTOPRE_DELAY);
 		for (size_t i=0;i<NUM_BANKS;i++)
 		{
 			bankStates[i].nextWrite = max(bankStates[i].nextWrite, currentClockCycle + max(tCCD, BL/2));
@@ -197,42 +197,42 @@ void Rank::receiveFromBus(BusPacket *packet)
 		}
 
 		//take note of where data is going when it arrives
-		incomingWriteBank = packet->bank;
-		incomingWriteRow = packet->row;
-		incomingWriteColumn = packet->column;
+		incomingWriteBank = packet->address.bank;
+		incomingWriteRow = packet->address.row;
+		incomingWriteColumn = packet->address.col;
 		delete(packet);
 		break;
 	case ACTIVATE:
 		//make sure activate is allowed
-		if (bankStates[packet->bank].currentBankState != Idle ||
-		        currentClockCycle < bankStates[packet->bank].nextActivate)
+		if (bankStates[packet->address.bank].currentBankState != Idle ||
+			currentClockCycle < bankStates[packet->address.bank].nextActivate)
 		{
 			ERROR_("== Error - Rank " << id << " received an ACT when not allowed");
 			packet->print();
-			bankStates[packet->bank].print();
+			bankStates[packet->address.bank].print();
 			exit(0);
 		}
 
-		bankStates[packet->bank].currentBankState = RowActive;
-		bankStates[packet->bank].nextActivate = currentClockCycle + tRC;
-		bankStates[packet->bank].openRowAddress = packet->row;
+		bankStates[packet->address.bank].currentBankState = RowActive;
+		bankStates[packet->address.bank].nextActivate = currentClockCycle + tRC;
+		bankStates[packet->address.bank].openRowAddress = packet->address.row;
 
 		//if AL is greater than one, then posted-cas is enabled - handle accordingly
 		if (AL>0)
 		{
-			bankStates[packet->bank].nextWrite = currentClockCycle + (tRCD-AL);
-			bankStates[packet->bank].nextRead = currentClockCycle + (tRCD-AL);
+			bankStates[packet->address.bank].nextWrite = currentClockCycle + (tRCD - AL);
+			bankStates[packet->address.bank].nextRead = currentClockCycle + (tRCD - AL);
 		}
 		else
 		{
-			bankStates[packet->bank].nextWrite = currentClockCycle + (tRCD-AL);
-			bankStates[packet->bank].nextRead = currentClockCycle + (tRCD-AL);
+			bankStates[packet->address.bank].nextWrite = currentClockCycle + (tRCD - AL);
+			bankStates[packet->address.bank].nextRead = currentClockCycle + (tRCD - AL);
 		}
 
-		bankStates[packet->bank].nextPrecharge = currentClockCycle + tRAS;
+		bankStates[packet->address.bank].nextPrecharge = currentClockCycle + tRAS;
 		for (size_t i=0;i<NUM_BANKS;i++)
 		{
-			if (i != packet->bank)
+			if (i != packet->address.bank)
 			{
 				bankStates[i].nextActivate = max(bankStates[i].nextActivate, currentClockCycle + tRRD);
 			}
@@ -241,15 +241,15 @@ void Rank::receiveFromBus(BusPacket *packet)
 		break;
 	case PRECHARGE:
 		//make sure precharge is allowed
-		if (bankStates[packet->bank].currentBankState != RowActive ||
-		        currentClockCycle < bankStates[packet->bank].nextPrecharge)
+		if (bankStates[packet->address.bank].currentBankState != RowActive ||
+			currentClockCycle < bankStates[packet->address.bank].nextPrecharge)
 		{
 			ERROR_("== Error - Rank " << id << " received a PRE when not allowed");
 			exit(0);
 		}
 
-		bankStates[packet->bank].currentBankState = Idle;
-		bankStates[packet->bank].nextActivate = max(bankStates[packet->bank].nextActivate, currentClockCycle + tRP);
+		bankStates[packet->address.bank].currentBankState = Idle;
+		bankStates[packet->address.bank].nextActivate = max(bankStates[packet->address.bank].nextActivate, currentClockCycle + tRP);
 		delete(packet); 
 		break;
 	case REFRESH:
@@ -281,7 +281,7 @@ void Rank::receiveFromBus(BusPacket *packet)
 		*/
 #ifndef NO_STORAGE
 		DEBUG("~   current cloclCycle: " << dec << currentClockCycle << "   ~");
-		banks[packet->bank].write(packet);
+		banks[packet->address.bank].write(packet);
 #endif
 		// end of the line for the write packet
 		delete(packet);
@@ -388,13 +388,10 @@ void Rank::powerUp()
 
 void Rank::dischargeCells(std::vector<int> & addrList)
 {
-    int bank, col, row, bit = 0;
     for (auto a : addrList)
     {
-        addrTranslator.Translate(a, bank, row, col, bit);
-      /*  if (bank == 5 && row < 128 && col < 4)
-            cout << "[DISCHARGER] b:" << dec << bank << ", r:" << row << ", c:" << col << ", bit:" << bit << endl;*/
-        banks[bank].writeBit(row, col, bit, false);
+		Address addr(a, true);
+        banks[addr.bank].writeBit(addr, false);
     }    
 }
 

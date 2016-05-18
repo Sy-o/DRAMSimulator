@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Address.cpp" />
     <ClCompile Include="AddressTranslator.cpp" />
     <ClCompile Include="Bank.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -105,6 +106,7 @@
     <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Address.h" />
     <ClInclude Include="AddressTranslator.h" />
     <ClInclude Include="Bank.h" />
     <ClInclude Include="BankState.h" />

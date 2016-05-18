@@ -128,8 +128,8 @@ CommandQueue::~CommandQueue()
 //Adds a command to appropriate queue
 void CommandQueue::enqueue(BusPacket *newBusPacket)
 {
-	unsigned rank = newBusPacket->rank;
-	unsigned bank = newBusPacket->bank;
+	unsigned rank = newBusPacket->address.rank;
+	unsigned bank = newBusPacket->address.bank;
 	if (queuingStructure==PerRank)
 	{
 		queues[rank][0].push_back(newBusPacket);
@@ -205,8 +205,8 @@ bool CommandQueue::pop(BusPacket **busPacket)
 						//  open row
 						for (size_t j=0;j<queues[refreshRank][0].size();j++)
 						{
-							if (queues[refreshRank][0][j]->row == bankStates[refreshRank][i].openRowAddress &&
-							        queues[refreshRank][0][j]->bank == i)
+							if (queues[refreshRank][0][j]->address.row == bankStates[refreshRank][i].openRowAddress &&
+								queues[refreshRank][0][j]->address.bank == i)
 							{
 								if (queues[refreshRank][0][j]->busPacketType != ACTIVATE &&
 								        isIssuable(queues[refreshRank][0][j]))
@@ -313,8 +313,8 @@ bool CommandQueue::pop(BusPacket **busPacket)
 						{
 							BusPacket *packet = refreshQueue[j];
 							//if a command in the queue is going to the same row . . .
-							if (bankStates[refreshRank][b].openRowAddress == packet->row &&
-							        b == packet->bank)
+							if (bankStates[refreshRank][b].openRowAddress == packet->address.row &&
+								b == packet->address.bank)
 							{
 								// . . . and is not an activate . . .
 								if (packet->busPacketType != ACTIVATE)
@@ -386,8 +386,8 @@ bool CommandQueue::pop(BusPacket **busPacket)
 								for (size_t j=0;j<i;j++)
 								{
 									if (queues[nextRank][0][j]->busPacketType != ACTIVATE &&
-									        queues[nextRank][0][j]->bank == queues[nextRank][0][i]->bank &&
-									        queues[nextRank][0][j]->row == queues[nextRank][0][i]->row)
+										queues[nextRank][0][j]->address.bank == queues[nextRank][0][i]->address.bank &&
+										queues[nextRank][0][j]->address.row == queues[nextRank][0][i]->address.row)
 									{
 										dependencyFound = true;
 										break;
@@ -403,7 +403,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 
 								if (i>0 && queues[nextRank][0][i-1]->busPacketType == ACTIVATE)
 								{
-									rowAccessCounters[(*busPacket)->rank][(*busPacket)->bank]++;
+									rowAccessCounters[(*busPacket)->address.rank][(*busPacket)->address.bank]++;
 									// i is being returned, but i-1 is being thrown away, so must delete it here 
 									delete(queues[nextRank][0][i-1]);
 									//erase is exclusive on the upper end, so really this will erase (i-1) and i
@@ -450,8 +450,8 @@ bool CommandQueue::pop(BusPacket **busPacket)
 							for (size_t i=0;i<queues[nextRankPRE][0].size();i++)
 							{
 								//if there is something going to that bank and row, then we don't want to send a PRE
-								if (queues[nextRankPRE][0][i]->bank == nextBankPRE &&
-								        queues[nextRankPRE][0][i]->row == bankStates[nextRankPRE][nextBankPRE].openRowAddress)
+								if (queues[nextRankPRE][0][i]->address.bank == nextBankPRE &&
+									queues[nextRankPRE][0][i]->address.row == bankStates[nextRankPRE][nextBankPRE].openRowAddress)
 								{
 									found = true;
 									break;
@@ -500,7 +500,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 						// going there before we close it
 						for (size_t j=0;j<queues[refreshRank][i].size();j++)
 						{
-							if (queues[refreshRank][i][j]->row == bankStates[refreshRank][i].openRowAddress)
+							if (queues[refreshRank][i][j]->address.row == bankStates[refreshRank][i].openRowAddress)
 							{
 								if (queues[refreshRank][i][j]->busPacketType != ACTIVATE &&
 								        isIssuable(queues[refreshRank][i][j]))
@@ -584,7 +584,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 						//search for commands going to open bank
 						for (size_t j=0;j<queues[refreshRank][i].size();j++)
 						{
-							if (bankStates[refreshRank][i].openRowAddress == queues[refreshRank][i][j]->row)
+							if (bankStates[refreshRank][i].openRowAddress == queues[refreshRank][i][j]->address.row)
 							{
 								if (queues[refreshRank][i][j]->busPacketType != ACTIVATE)
 								{
@@ -656,7 +656,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 								for (size_t j=0;j<i;j++)
 								{
 									if (queues[nextRank][nextBank][j]->busPacketType != ACTIVATE &&
-									        queues[nextRank][nextBank][i]->row == queues[nextRank][nextBank][j]->row)
+										queues[nextRank][nextBank][i]->address.row == queues[nextRank][nextBank][j]->address.row)
 									{
 										dependencyFound = true;
 										break;
@@ -714,7 +714,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 							for (size_t i=0;i<queues[nextRankPRE][nextBankPRE].size();i++)
 							{
 								//if something is going to the open row, we shouldn't close it
-								if (queues[nextRankPRE][nextBankPRE][i]->row == bankStates[nextRankPRE][nextBankPRE].openRowAddress)
+								if (queues[nextRankPRE][nextBankPRE][i]->address.row == bankStates[nextRankPRE][nextBankPRE].openRowAddress)
 								{
 									found = true;
 									break;
@@ -800,7 +800,7 @@ bool CommandQueue::pop(BusPacket **busPacket)
 	//if its an activate, add a tfaw counter
 	if ((*busPacket)->busPacketType==ACTIVATE)
 	{
-		tFAWCountdown[(*busPacket)->rank].push_back(tFAW);
+		tFAWCountdown[(*busPacket)->address.rank].push_back(tFAW);
 	}
 
 	return true;
@@ -875,10 +875,10 @@ bool CommandQueue::isIssuable(BusPacket *busPacket)
 
 		break;
 	case ACTIVATE:
-		if ((bankStates[busPacket->rank][busPacket->bank].currentBankState == Idle ||
-		        bankStates[busPacket->rank][busPacket->bank].currentBankState == Refreshing) &&
-		        currentClockCycle >= bankStates[busPacket->rank][busPacket->bank].nextActivate &&
-		        tFAWCountdown[busPacket->rank].size() < 4)
+		if ((bankStates[busPacket->address.rank][busPacket->address.bank].currentBankState == Idle ||
+			bankStates[busPacket->address.rank][busPacket->address.bank].currentBankState == Refreshing) &&
+			currentClockCycle >= bankStates[busPacket->address.rank][busPacket->address.bank].nextActivate &&
+			tFAWCountdown[busPacket->address.rank].size() < 4)
 		{
 			return true;
 		}
@@ -889,10 +889,10 @@ bool CommandQueue::isIssuable(BusPacket *busPacket)
 		break;
 	case WRITE:
 	case WRITE_P:
-		if (bankStates[busPacket->rank][busPacket->bank].currentBankState == RowActive &&
-		        currentClockCycle >= bankStates[busPacket->rank][busPacket->bank].nextWrite &&
-		        busPacket->row == bankStates[busPacket->rank][busPacket->bank].openRowAddress &&
-		        rowAccessCounters[busPacket->rank][busPacket->bank] < TOTAL_ROW_ACCESSES)
+		if (bankStates[busPacket->address.rank][busPacket->address.bank].currentBankState == RowActive &&
+			currentClockCycle >= bankStates[busPacket->address.rank][busPacket->address.bank].nextWrite &&
+			busPacket->address.row == bankStates[busPacket->address.rank][busPacket->address.bank].openRowAddress &&
+			rowAccessCounters[busPacket->address.rank][busPacket->address.bank] < TOTAL_ROW_ACCESSES)
 		{
 			return true;
 		}
@@ -903,10 +903,10 @@ bool CommandQueue::isIssuable(BusPacket *busPacket)
 		break;
 	case READ_P:
 	case READ:
-		if (bankStates[busPacket->rank][busPacket->bank].currentBankState == RowActive &&
-		        currentClockCycle >= bankStates[busPacket->rank][busPacket->bank].nextRead &&
-		        busPacket->row == bankStates[busPacket->rank][busPacket->bank].openRowAddress &&
-		        rowAccessCounters[busPacket->rank][busPacket->bank] < TOTAL_ROW_ACCESSES)
+		if (bankStates[busPacket->address.rank][busPacket->address.bank].currentBankState == RowActive &&
+			currentClockCycle >= bankStates[busPacket->address.rank][busPacket->address.bank].nextRead &&
+			busPacket->address.row == bankStates[busPacket->address.rank][busPacket->address.bank].openRowAddress &&
+			rowAccessCounters[busPacket->address.rank][busPacket->address.bank] < TOTAL_ROW_ACCESSES)
 		{
 			return true;
 		}
@@ -916,8 +916,8 @@ bool CommandQueue::isIssuable(BusPacket *busPacket)
 		}
 		break;
 	case PRECHARGE:
-		if (bankStates[busPacket->rank][busPacket->bank].currentBankState == RowActive &&
-		        currentClockCycle >= bankStates[busPacket->rank][busPacket->bank].nextPrecharge)
+		if (bankStates[busPacket->address.rank][busPacket->address.bank].currentBankState == RowActive &&
+			currentClockCycle >= bankStates[busPacket->address.rank][busPacket->address.bank].nextPrecharge)
 		{
 			return true;
 		}

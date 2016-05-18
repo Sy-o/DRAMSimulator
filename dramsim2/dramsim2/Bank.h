@@ -40,6 +40,7 @@
 #include "SimulatorObject.h"
 #include "BankState.h"
 #include "BusPacket.h"
+#include "Address.h"
 #include <map>
 #include <vector>
 
@@ -60,11 +61,11 @@ namespace DRAMSim
         void write(const BusPacket *busPacket);
 
         //extra functions
-        uint16_t read(int row, int col);
-        void writeBit(int row, int col, int bit, bool set);
-        void write(int row, int col, int data);
+        uint16_t read(Address addr);
+		void writeBit(Address addr, bool set);
+		void write(Address addr, int data);
 
-        void invertBit(int row, int col, int bit);
+		void invertBit(Address addr);
 
         void print(int id);
         void printShort();

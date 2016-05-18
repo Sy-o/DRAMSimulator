@@ -46,15 +46,21 @@ using namespace DRAMSim;
 using namespace std;
 
 BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, unsigned col, unsigned rw, unsigned r, unsigned b, DataPacket *dat)
+	: address(r, b, rw, col)
 {
 	physicalAddress = physicalAddr;
 	busPacketType = packtype;
 	data.reset(dat);
-	rank = r;
-	bank = b;
-	column = col;
-	row = rw;
 }
+
+BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, Address addr, DataPacket *dat)
+{
+	physicalAddress = physicalAddr;
+	busPacketType = packtype;
+	data.reset(dat);
+	address = addr;
+}
+
 void BusPacket::print(uint64_t currentClockCycle, bool dataStart)
 {
 	if (this == NULL)
@@ -67,25 +73,25 @@ void BusPacket::print(uint64_t currentClockCycle, bool dataStart)
 		switch (busPacketType)
 		{
 		case READ:
-			cmd_verify_out << currentClockCycle << ": read ("<<rank<<","<<bank<<","<<column<<",0);"<<endl;
+			cmd_verify_out << currentClockCycle << ": read ("<<address.rank<<","<<address.bank<<","<<address.col<<",0);"<<endl;
 			break;
 		case READ_P:
-			cmd_verify_out << currentClockCycle << ": read ("<<rank<<","<<bank<<","<<column<<",1);"<<endl;
+			cmd_verify_out << currentClockCycle << ": read (" << address.rank << "," << address.bank << "," << address.col << ",1);" << endl;
 			break;
 		case WRITE:
-			cmd_verify_out << currentClockCycle << ": write ("<<rank<<","<<bank<<","<<column<<",0 , 0, 'h0);"<<endl;
+			cmd_verify_out << currentClockCycle << ": write (" << address.rank << "," << address.bank << "," << address.col << ",0 , 0, 'h0);" << endl;
 			break;
 		case WRITE_P:
-			cmd_verify_out << currentClockCycle << ": write ("<<rank<<","<<bank<<","<<column<<",1, 0, 'h0);"<<endl;
+			cmd_verify_out << currentClockCycle << ": write (" << address.rank << "," << address.bank << "," << address.col << ",1, 0, 'h0);" << endl;
 			break;
 		case ACTIVATE:
-			cmd_verify_out << currentClockCycle <<": activate (" << rank << "," << bank << "," << row <<");"<<endl;
+			cmd_verify_out << currentClockCycle << ": activate (" << address.rank << "," << address.bank << "," << address.row << ");" << endl;
 			break;
 		case PRECHARGE:
-			cmd_verify_out << currentClockCycle <<": precharge (" << rank << "," << bank << "," << row <<");"<<endl;
+			cmd_verify_out << currentClockCycle << ": precharge (" << address.rank << "," << address.bank << "," << address.row << ");" << endl;
 			break;
 		case REFRESH:
-			cmd_verify_out << currentClockCycle <<": refresh (" << rank << ");"<<endl;
+			cmd_verify_out << currentClockCycle << ": refresh (" << address.rank << ");" << endl;
 			break;
 		case DATA:
 			//TODO: data verification?
@@ -107,28 +113,28 @@ void BusPacket::print()
 		switch (busPacketType)
 		{
 		case READ:
-			PRINT("BP [READ] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [READ] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case READ_P:
-			PRINT("BP [READ_P] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [READ_P] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case WRITE:
-			PRINT("BP [WRITE] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [WRITE] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case WRITE_P:
-			PRINT("BP [WRITE_P] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [WRITE_P] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case ACTIVATE:
-			PRINT("BP [ACT] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [ACT] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case PRECHARGE:
-			PRINT("BP [PRE] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [PRE] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case REFRESH:
-			PRINT("BP [REF] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"]");
+			PRINT("BP [REF] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "]");
 			break;
 		case DATA:
-			PRINTN("BP [DATA] pa[0x"<<hex<<physicalAddress<<dec<<"] r["<<rank<<"] b["<<bank<<"] row["<<row<<"] col["<<column<<"] data["<<*data<<"]");
+			PRINTN("BP [DATA] pa[0x" << hex << physicalAddress << dec << "] r[" << address.rank << "] b[" << address.bank << "] row[" << address.row << "] col[" << address.col << "] data[" << *data << "]");
 			//BusPacket::printData(data);
 			PRINT("");
 			break;

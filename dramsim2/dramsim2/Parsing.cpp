@@ -34,8 +34,10 @@
 
 #include "Parsing.h"
 #include <sstream>
+#include <fstream>
 
 using namespace DRAMSim;
+using namespace std;
 
 void trim(string& s)
 {
@@ -43,12 +45,12 @@ void trim(string& s)
     s.erase(s.find_last_not_of(" \n\r\t") + 1);
 }
 
-DataPacket *parseTraceFileLine(std::string &line, uint64_t &addr, enum TransactionType &transType, uint64_t &clockCycle, TraceType type)
+DataPacket *parseTraceFileLine(string &line, uint64_t &addr, enum TransactionType &transType, uint64_t &clockCycle, TraceType type)
 {
     size_t previousIndex = 0;
     size_t spaceIndex = 0;
     DataPacket *dataPacket = new DataPacket();
-    std::string addressStr = "", cmdStr = "", dataStr = "", ccStr = "";
+    string addressStr = "", cmdStr = "", dataStr = "", ccStr = "";
 #ifndef _SIM_
     bool useClockCycle = false;
 #else
@@ -216,4 +218,102 @@ DataPacket *parseTraceFileLine(std::string &line, uint64_t &addr, enum Transacti
         break;
     }
     return dataPacket;
+}
+
+FaultType GetFaultTypeFromString(string type)
+{
+	if (type == "SAF") return SAF;
+	if (type == "TF") return TF;
+	if (type == "CFin") return CFin;
+	if (type == "CFid") return CFid;
+	if (type == "CFst") return CFst;
+	return NONE;
+}
+
+vector<Fault> ParseCSV(string filePath)
+{
+	vector<Fault> faults;
+	ifstream file(filePath);
+	while (file.good())
+	{
+		string line;
+		getline(file, line);
+
+		Fault* fault = 0;
+		int paramCount = 0;
+
+		stringstream strstr(line);
+		string value = "";
+
+		while (getline(strstr, value, '\t'))
+		{
+			if (value == "SAF" || value == "TF" || value == "CFid" || value == "CFin" || value == "CFst")
+			{
+				if (GetFaultTypeFromString(value) != NONE)
+				{
+					faults.push_back(Fault());
+					fault = &faults.back();
+					fault->type = GetFaultTypeFromString(value);
+				}
+			}
+			else
+			{
+				if (fault)
+				{
+					paramCount++;
+					switch (fault->type)
+					{
+					case SAF:
+					case TF:
+						if (paramCount == 1)
+						{
+							istringstream iss(value.substr(2));
+							iss >> hex >> fault->victimAddress;
+						}
+						if (paramCount == 2)
+						{
+							istringstream iss(value);
+							iss >> dec >> fault->victimValue;
+						}
+						break;
+					case CFin:
+					case CFst:
+						if (paramCount == 1 || paramCount == 3)
+						{
+							istringstream iss(value.substr(2));
+							if (paramCount == 1)
+								iss >> hex >> fault->victimAddress;
+							else
+								iss >> hex >> fault->agressorAddress;
+						}
+						if (paramCount == 2 || paramCount == 4)
+						{
+							istringstream iss(value);
+							if (paramCount == 2)
+								iss >> dec >> fault->victimValue;
+							else
+								iss >> dec >> fault->agressorValue;
+						}
+						break;
+					case CFid:
+						if (paramCount == 1 || paramCount == 3)
+						{
+							istringstream iss(value.substr(2));
+							if (paramCount == 1)
+								iss >> hex >> fault->victimAddress;
+							else
+								iss >> hex >> fault->agressorAddress;
+						}
+						if (paramCount == 4)
+						{
+							istringstream iss(value);
+							iss >> dec >> fault->agressorValue;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	return faults;
 }

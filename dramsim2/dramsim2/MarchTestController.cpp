@@ -86,7 +86,7 @@ void MarchTestController::Update()
 	if (err)
 	{
 		state.testPassed = false;
-        cout << "[MarchTest] Errors are detected while running phase!\n      Signature sum is " << (err>>1) << "(" << addrTranslator.GetDescription(err, true) << ")" << endl;
+        cout << "[MarchTest] Errors are detected while running phase!\n      Signature sum is " << (err>>1) << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << endl;
 	}
 
 	state.phase++;
@@ -99,32 +99,31 @@ void MarchTestController::Update()
 
 void MarchTestController::RunElement(int element, int address, uint16_t &buffer)
 {
-	int r = 0, b = 0, row = 0, col = 0;
-	addrTranslator.Translate(address, r, b, row, col);
+	Address addr(address, false);
 	uint16_t data = 0;
 
 	switch (element)
 	{
 	case MO_RD:
-		data = dramDevice->read(r, b, row, col);
+		data = dramDevice->read(addr);
 		buffer = data;
 		break;
 	case MO_RDC:
-		data = dramDevice->read(r, b, row, col);
+		data = dramDevice->read(addr);
 		buffer = ~data;
 		break;
 	case MO_WD:
-		dramDevice->write(r, b, row, col, buffer);
+		dramDevice->write(addr, buffer);
 		break;
 	case MO_WDC:
-		dramDevice->write(r, b, row, col, ~buffer);
+		dramDevice->write(addr, ~buffer);
 		break;
 	}
 
 	//convertData
 	if (element == MO_RD || element == MO_RDC)
 	{
-		saodc.UpdateTestSig(r, b, row, col, data);
+		saodc.UpdateTestSig(addr, data);
 	}
 }
 

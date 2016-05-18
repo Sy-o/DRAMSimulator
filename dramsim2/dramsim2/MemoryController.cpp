@@ -121,7 +121,7 @@ void MemoryController::receiveFromBus(BusPacket *bpacket)
 
 	//add to return read data queue
 	returnTransaction.push_back(Transaction(RETURN_DATA, bpacket->physicalAddress, bpacket->data.release()));
-	totalReadsPerBank[SEQUENTIAL(bpacket->rank, bpacket->bank)]++;
+	totalReadsPerBank[SEQUENTIAL(bpacket->address.rank, bpacket->address.bank)]++;
 
 	// this delete statement saves a mindboggling amount of memory
 	delete(bpacket);
@@ -255,7 +255,7 @@ void MemoryController::update()
 			dataCyclesLeft = BL / 2;
 
 			totalTransactions++;
-			totalWritesPerBank[SEQUENTIAL(writeDataToSend[0]->rank, writeDataToSend[0]->bank)]++;
+			totalWritesPerBank[SEQUENTIAL(writeDataToSend[0]->address.rank, writeDataToSend[0]->address.bank)]++;
 
 			writeDataCountdown.erase(writeDataCountdown.begin());
 			writeDataToSend.erase(writeDataToSend.begin());
@@ -291,8 +291,8 @@ void MemoryController::update()
 		if (poppedBusPacket->busPacketType == WRITE || poppedBusPacket->busPacketType == WRITE_P)
 		{
 
-			writeDataToSend.push_back(new BusPacket(DATA, poppedBusPacket->physicalAddress, poppedBusPacket->column,
-				poppedBusPacket->row, poppedBusPacket->rank, poppedBusPacket->bank,
+			writeDataToSend.push_back(new BusPacket(DATA, poppedBusPacket->physicalAddress, poppedBusPacket->address.col,
+				poppedBusPacket->address.row, poppedBusPacket->address.rank, poppedBusPacket->address.bank,
 				poppedBusPacket->data.release()));
 			writeDataCountdown.push_back(WL);
 		}
@@ -301,8 +301,8 @@ void MemoryController::update()
 		//update each bank's state based on the command that was just popped out of the command queue
 		//
 		//for readability's sake
-		unsigned rank = poppedBusPacket->rank;
-		unsigned bank = poppedBusPacket->bank;
+		unsigned rank = poppedBusPacket->address.rank;
+		unsigned bank = poppedBusPacket->address.bank;
 		switch (poppedBusPacket->busPacketType)
 		{
 		case READ_P:
@@ -334,7 +334,7 @@ void MemoryController::update()
 			{
 				for (size_t j = 0; j < NUM_BANKS; j++)
 				{
-					if (i != poppedBusPacket->rank)
+					if (i != poppedBusPacket->address.rank)
 					{
 						//check to make sure it is active before trying to set (save's time?)
 						if (bankStates[i][j].currentBankState == RowActive)
@@ -391,7 +391,7 @@ void MemoryController::update()
 			{
 				for (size_t j = 0; j < NUM_BANKS; j++)
 				{
-					if (i != poppedBusPacket->rank)
+					if (i != poppedBusPacket->address.rank)
 					{
 						if (bankStates[i][j].currentBankState == RowActive)
 						{
@@ -429,7 +429,7 @@ void MemoryController::update()
 
 			bankStates[rank][bank].currentBankState = RowActive;
 			bankStates[rank][bank].lastCommand = ACTIVATE;
-			bankStates[rank][bank].openRowAddress = poppedBusPacket->row;
+			bankStates[rank][bank].openRowAddress = poppedBusPacket->address.row;
 			bankStates[rank][bank].nextActivate = max(currentClockCycle + tRC, bankStates[rank][bank].nextActivate);
 			bankStates[rank][bank].nextPrecharge = max(currentClockCycle + tRAS, bankStates[rank][bank].nextPrecharge);
 
@@ -440,7 +440,7 @@ void MemoryController::update()
 
 			for (size_t i = 0; i < NUM_BANKS; i++)
 			{
-				if (i != poppedBusPacket->bank)
+				if (i != poppedBusPacket->address.bank)
 				{
 					bankStates[rank][i].nextActivate = max(currentClockCycle + tRRD, bankStates[rank][i].nextActivate);
 				}
