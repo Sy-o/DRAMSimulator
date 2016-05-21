@@ -47,6 +47,7 @@ public:
 
 private:
 	void RunElement(int element, int address, uint16_t &buffer);
+	void InitMarchTest(int marchTest);
 
 private:
 	AddressTranslator addrTranslator;

@@ -20,7 +20,7 @@ void RegenerationController::Initialize(DRAMDevice* dram)
     refreshEndCycle = 0;
 	startMarchTestCycle = 0;
 	saodcController.SetDRAMDevice(dram);
-	marchController.Initialize(MARCH_C, dram);
+	marchController.Initialize(MARCH_C_MINUS, dram);
 	needTest = false;
 }
 

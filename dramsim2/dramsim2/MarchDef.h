@@ -19,6 +19,12 @@ enum MarchOperation
 
 enum MarchTest
 {
-    MARCH_C,
-    MARCH_B
+    MARCH_C_MINUS,
+    MARCH_B,
+	MARCH_A,
+	MARCH_Y,
+	MARCH_X,
+	MATS,
+	MATS_PLUS,
+	MATS_PLUS_PLUS
 };

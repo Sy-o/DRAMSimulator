@@ -14,26 +14,72 @@ void MarchTestController::Initialize(int marchTest, DRAMDevice* dram)
 {
 	phases.clear();
 	dramDevice = dram;
+	InitMarchTest(marchTest);
+}
 
+void MarchTestController::InitMarchTest(int marchTest)
+{
 	switch (marchTest)
 	{
-	case MARCH_C:
+	case MARCH_C_MINUS:
 	{
-		phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
-		phases.push_back({ MD_UP, { MO_RDC, MO_WD } });
-		phases.push_back({ MD_DOWN, { MO_RD, MO_WDC } });
-		phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
-		phases.push_back({ MD_DOWN, { MO_RD } });
-		break;
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_UP, { MO_RDC, MO_WD } });
+					phases.push_back({ MD_DOWN, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
 	}
 	case MARCH_B:
 	{
-		phases.push_back({ MD_UP, { MO_RD, MO_WDC, MO_RDC, MO_WD, MO_RD, MO_WDC } });
-		phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
-		phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
-		phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
-		phases.push_back({ MD_DOWN, { MO_RD } });
-		break;
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC, MO_RDC, MO_WD, MO_RD, MO_WDC } });
+					phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
+					phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
+	}
+	case MARCH_A:
+	{
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC, MO_WD, MO_WDC } });
+					phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
+					phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
+	}
+	case MARCH_X:
+	{
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
+	}
+	case MARCH_Y:
+	{
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC, MO_RDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_RD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
+	}
+	case MATS:
+	{
+					phases.push_back({ MD_BOTH, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_BOTH, { MO_RDC, MO_WD } });
+					break;
+	}
+	case MATS_PLUS:
+	{
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
+					phases.push_back({ MD_BOTH, { MO_RD } });
+					break;
+	}
+	case MATS_PLUS_PLUS:
+	{
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_RD } });
+					break;
 	}
 	default:
 		break;
