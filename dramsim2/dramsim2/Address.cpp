@@ -25,3 +25,8 @@ int Address::GetPhysical()
 {
 	return translator.TranslateToAddr(rank, bank, row, col, bit);
 }
+
+void Address::InitTranslator()
+{
+	translator.Init();
+}

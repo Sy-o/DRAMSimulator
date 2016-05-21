@@ -15,7 +15,7 @@ namespace DRAMSim
 	{
 		friend FaultController;
 	public:
-		DRAMDevice(MemoryController *mc);
+		DRAMDevice(MemoryController *mc, std::string faultFilePath = "");
 		~DRAMDevice();
 
 	public:
@@ -35,6 +35,9 @@ namespace DRAMSim
 		uint16_t read(Address addr);
 		void write(Address addr, uint16_t data);
 		void invertBit(Address addr);
+
+	private:
+		uint16_t readBit(Address addr);
 
 	private:
 		vector<Rank> *ranks;

@@ -4,14 +4,14 @@
     <Filter Include="General">
       <UniqueIdentifier>{36f7bfe3-7c5b-42f2-9ae6-63268d538bd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="General\Refresh">
-      <UniqueIdentifier>{5a52f2c5-564f-42c4-ae3b-fa7bfda1ff42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="General\Defects">
       <UniqueIdentifier>{1f15d4c9-44e2-4c26-91cf-792959da2329}</UniqueIdentifier>
     </Filter>
     <Filter Include="General\Common">
       <UniqueIdentifier>{283d015e-ea9e-4738-b8f6-4e7b184c791a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Refresh">
+      <UniqueIdentifier>{5a52f2c5-564f-42c4-ae3b-fa7bfda1ff42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

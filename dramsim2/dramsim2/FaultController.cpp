@@ -1,11 +1,11 @@
 #include "FaultController.h"
+#include "SystemConfiguration.h"
 #include "DRAMDevice.h"
 #include <algorithm>
 using namespace std;
 
-FaultController::FaultController(DRAMDevice* dram)
+FaultController::FaultController(DRAMDevice* dram) : bitWidth(dramsim_log2(DEVICE_WIDTH)), dramDevice(dram)
 {
-	dramDevice = dram;
 }
 
 FaultController::~FaultController()
@@ -15,22 +15,56 @@ FaultController::~FaultController()
 void FaultController::SetFaults(std::vector<Fault>& faults)
 {
 	faultyCells = faults;
+	auto it = find_if(faultyCells.begin(), faultyCells.end(), [](Fault f){return f.type == SAF; });
+	if (it != faultyCells.end())
+	{
+		InitSAFs();
+	}
+}
+
+void FaultController::InitSAFs()
+{
+	for (auto& f : faultyCells)
+	{
+		if (f.type == SAF)
+		{
+			Address addr(f.victimAddress, true);
+			(*dramDevice->ranks)[addr.rank].banks[addr.bank].writeBit(addr, f.victimValue == 1);
+		}
+	}
 }
 
 bool FaultController::IsFaulty(int address)
 {
-	auto it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.victimAddress == address; });
+	auto it = find_if(faultyCells.begin(), faultyCells.end(), 
+		[address](Fault f){return f.victimAddress == address && f.type != AF; });
 	return it != faultyCells.end();
 }
 
 bool FaultController::IsAgressor(int address)
 {
-	auto it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.agressorAddress == address; });
+	auto it = find_if(faultyCells.begin(), faultyCells.end(), 
+		[address](Fault f){return f.agressorAddress == address && f.type != AF; });
+	return it != faultyCells.end();
+}
+
+bool FaultController::HasAFFault(int address)
+{
+	address >>= bitWidth;// replace bit part
+	auto it = find_if(faultyCells.begin(), faultyCells.end(),
+		[address, this](Fault f){return f.type == AF && (f.agressorAddress >> bitWidth) == address; });
 	return it != faultyCells.end();
 }
 
 void FaultController::DoFaults(Address addr, uint16_t data)
 {
+	if (HasAFFault(addr.GetPhysical()))
+	{
+		Fault f = GetCellAttributes(addr.GetPhysical(), true, true);
+		Address v(f.victimAddress, true);
+		(*dramDevice->ranks)[v.rank].banks[v.bank].write(v, data);
+	}
+	
 	uint16_t oldData = dramDevice->read(addr);
 	uint16_t bitMask = oldData ^ data;
 	
@@ -39,48 +73,47 @@ void FaultController::DoFaults(Address addr, uint16_t data)
 		if (bitMask & (1 << i))
 		{
 			addr.bit = i;
-			DoOperationOnBit(addr.GetPhysical(), data & (1 << i), oldData & (1 << i));
+			DoOperationOnBit(addr, data & (1 << i) ? 1 : 0, oldData & (1 << i) ? 1 : 0);
 		}
 	}
 }
 
-void FaultController::DoOperationOnBit(int addr, uint16_t newVal, uint16_t oldVal)
+void FaultController::DoOperationOnBit(Address address, uint16_t newVal, uint16_t oldVal)
 {
-	Address address(addr, true);
+	int addr = address.GetPhysical();
 	if (IsFaulty(addr))
 	{
 		Fault fault = GetCellAttributes(addr, false);
 		switch (fault.type)
 		{
-		case SAF: break;//set on init		
+		case SAF: break;
 		case TF:
 		{
 				   if (oldVal != fault.victimValue)
 				   {
-					   (*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+					   WriteBit(address, newVal);
 				   }
 				   break;
 		}
 		case CFin:
 		{
-					 (*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+					 WriteBit(address, newVal);
 				     break;
 		}			
 		case CFid:
 		{
-					 (*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+					 WriteBit(address, newVal);
 					 break;
 		}
 		case CFst:
 		{
 					 if (newVal != fault.victimValue)
-						 (*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+						 WriteBit(address, newVal);
 					 else
 					 {
 						 Address agrAdr(fault.agressorAddress, true);
-						 uint16_t aggressorData = (*dramDevice->ranks)[agrAdr.rank].banks[agrAdr.bank].read(agrAdr);
-						 if ((aggressorData & (1 << agrAdr.bit)) == fault.agressorValue)
-							 (*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+						 if (dramDevice->readBit(agrAdr) == fault.agressorValue)
+							 WriteBit(address, newVal);
 					 }
 					 break;
 		}
@@ -108,28 +141,34 @@ void FaultController::DoOperationOnBit(int addr, uint16_t newVal, uint16_t oldVa
 						 if (newVal == fault.agressorValue && newVal != oldVal)
 						 {
 							 Address vicAdr(fault.victimAddress, true);
-							 (*dramDevice->ranks)[vicAdr.rank].banks[vicAdr.bank].writeBit(vicAdr, fault.agressorValue == 1);
+							 WriteBit(vicAdr, fault.victimValue);
 						 }
 						 break;
 			}
 			default :
 				break;
 			}
-			(*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+			WriteBit(address, newVal);
 		}
 		else
 		{
-			(*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, newVal == 1);
+			WriteBit(address, newVal);
 		}
 	}	
 }
 
-Fault FaultController::GetCellAttributes(int address, bool isAgressor)
+Fault FaultController::GetCellAttributes(int address, bool isAgressor, bool isAF)
 {
 	vector<Fault>::iterator it;
 	if (isAgressor)
 	{
-		it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.agressorAddress == address; });
+		if (isAF)
+		{
+			address >>= bitWidth;
+			it = find_if(faultyCells.begin(), faultyCells.end(), [address, this](Fault f){return (f.agressorAddress >> bitWidth) == address; });
+		}
+		else
+			it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.agressorAddress == address; });
 	}
 	else
 	{
@@ -138,4 +177,9 @@ Fault FaultController::GetCellAttributes(int address, bool isAgressor)
 	if (it != faultyCells.end())
 		return *it;
 	else return Fault();
+}
+
+void FaultController::WriteBit(Address address, int val)
+{
+	(*dramDevice->ranks)[address.rank].banks[address.bank].writeBit(address, val == 1);
 }

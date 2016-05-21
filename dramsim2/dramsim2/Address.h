@@ -27,5 +27,6 @@ public:
 	int bit;
 
 public:
+	static void InitTranslator();
 	static AddressTranslator translator;
 };

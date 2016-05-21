@@ -227,6 +227,7 @@ FaultType GetFaultTypeFromString(string type)
 	if (type == "CFin") return CFin;
 	if (type == "CFid") return CFid;
 	if (type == "CFst") return CFst;
+	if (type == "AF") return AF;
 	return NONE;
 }
 
@@ -247,7 +248,7 @@ vector<Fault> ParseCSV(string filePath)
 
 		while (getline(strstr, value, '\t'))
 		{
-			if (value == "SAF" || value == "TF" || value == "CFid" || value == "CFin" || value == "CFst")
+			if (value == "SAF" || value == "TF" || value == "CFid" || value == "CFin" || value == "CFst" || value == "AF")
 			{
 				if (GetFaultTypeFromString(value) != NONE)
 				{
@@ -276,7 +277,7 @@ vector<Fault> ParseCSV(string filePath)
 							iss >> dec >> fault->victimValue;
 						}
 						break;
-					case CFin:
+					case CFid:
 					case CFst:
 						if (paramCount == 1 || paramCount == 3)
 						{
@@ -295,7 +296,7 @@ vector<Fault> ParseCSV(string filePath)
 								iss >> dec >> fault->agressorValue;
 						}
 						break;
-					case CFid:
+					case CFin:
 						if (paramCount == 1 || paramCount == 3)
 						{
 							istringstream iss(value.substr(2));
@@ -310,6 +311,15 @@ vector<Fault> ParseCSV(string filePath)
 							iss >> dec >> fault->agressorValue;
 						}
 						break;
+					case AF:
+						if (paramCount == 1 || paramCount == 3)
+						{
+							istringstream iss(value.substr(2));
+							if (paramCount == 1)
+								iss >> hex >> fault->victimAddress;
+							else
+								iss >> hex >> fault->agressorAddress;
+						}
 					}
 				}
 			}

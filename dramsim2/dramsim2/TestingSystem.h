@@ -9,7 +9,7 @@ class TestingSystem
         unsigned Address;
         uint16_t Data;
 
-        Trans(bool write, unsigned address, uint16_t data) : Write(write), Address(address), Data(data){};
+        Trans(bool write, unsigned address, uint16_t data = 0) : Write(write), Address(address), Data(data){};
     };
 
 public:

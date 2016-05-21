@@ -86,7 +86,7 @@ void MarchTestController::Update()
 	if (err)
 	{
 		state.testPassed = false;
-        cout << "[MarchTest] Errors are detected while running phase!\n      Signature sum is " << (err>>1) << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << endl;
+        cout << "[MarchTest] Errors are detected while running phase!\n      Signature sum is " << err << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << endl;
 	}
 
 	state.phase++;

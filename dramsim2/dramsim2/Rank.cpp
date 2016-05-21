@@ -49,9 +49,9 @@ Rank::Rank() :
 		
 {
 
-	DEBUG("num BANKS = " << NUM_BANKS);
+	/*DEBUG("num BANKS = " << NUM_BANKS);
 	DEBUG("num ROWS = " << NUM_ROWS);
-	DEBUG("num COLS = " << NUM_COLS);
+	DEBUG("num COLS = " << NUM_COLS);*/
 	bankStates = vector<BankState>(NUM_BANKS, BankState());
 	currentClockCycle = 0;
 

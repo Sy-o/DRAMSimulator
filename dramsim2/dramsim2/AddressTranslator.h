@@ -7,6 +7,8 @@ public:
     AddressTranslator();
     ~AddressTranslator();
 
+	void Init();
+
     void Translate(int address, int& rank, int& bank, int& row,  int& col);
     void Translate(int address, int& rank, int& bank, int& row, int& col, int& bit);
 

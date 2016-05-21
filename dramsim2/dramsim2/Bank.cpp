@@ -67,7 +67,7 @@ void Bank::initialize()
 
 void Bank::write(const BusPacket *busPacket)
 {
-    write(busPacket->address, busPacket->data->getData());
+   // write(busPacket->address, busPacket->data->getData());
     cout << "[DPKT] Rank receiving <-- : " <<*(busPacket->data) << endl;
 }
 

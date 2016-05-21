@@ -6,15 +6,20 @@ using namespace DRAMSim;
 
 AddressTranslator::AddressTranslator()
 {
-	RankWidth = dramsim_log2(NUM_RANKS);
-	BankWidth = dramsim_log2(NUM_BANKS);
-    RowWidth = dramsim_log2(NUM_ROWS);
-    ColWidth = dramsim_log2(NUM_COLS);
-    CellWidth = dramsim_log2(DEVICE_WIDTH);
+	Init();
 }
 
 AddressTranslator::~AddressTranslator()
 {}
+
+void AddressTranslator::Init()
+{
+	RankWidth = dramsim_log2(NUM_RANKS);
+	BankWidth = dramsim_log2(NUM_BANKS);
+	RowWidth = dramsim_log2(NUM_ROWS);
+	ColWidth = dramsim_log2(NUM_COLS);
+	CellWidth = dramsim_log2(DEVICE_WIDTH);
+}
 
 int AddressTranslator::GetValue(int width, int& address)
 {

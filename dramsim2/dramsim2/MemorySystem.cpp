@@ -41,7 +41,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <windows.h>
-//#include <unistd.h>
+#include "Address.h"
 #include <errno.h> 
 #include <sstream> //stringstream
 #include <stdlib.h> // getenv()
@@ -62,7 +62,7 @@ ofstream dramsim_log;
 powerCallBack_t MemorySystem::ReportPower = NULL;
 
 MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemIniFilename, string pwd,
-                           string traceFilename, unsigned int megsOfMemory) :
+	string traceFilename, unsigned int megsOfMemory, string fualtFilePath) :
 		ReturnReadData(NULL),
 		WriteDataDone(NULL),
 		systemID(0),
@@ -159,7 +159,7 @@ MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemI
 	NUM_DEVICES = JEDEC_DATA_BUS_BITS/DEVICE_WIDTH;
 	TOTAL_STORAGE = (NUM_RANKS * megsOfStoragePerRank); 
 
-	DEBUG("TOTAL_STORAGE : "<< TOTAL_STORAGE << "MB | "<<NUM_RANKS<<" Ranks | "<< NUM_DEVICES <<" Devices per rank");
+	DEBUG("TOTAL_STORAGE : " << ((double)TOTAL_STORAGE / NUM_DEVICES) << "MB | " << NUM_RANKS << " Ranks | "); /*<< NUM_DEVICES << " Devices per rank")*/
 
 	IniReader::InitEnumsFromStrings();
 	if (!IniReader::CheckIfAllSet())
@@ -167,8 +167,10 @@ MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemI
 		exit(-1);
 	}
 
+	Address::InitTranslator();
+
 	memoryController = new MemoryController(this, &visDataOut);
-	dramDevice = new DRAMDevice(memoryController);
+	dramDevice = new DRAMDevice(memoryController, fualtFilePath);
 
 	memoryController->attachDRAMDevice(dramDevice);
 

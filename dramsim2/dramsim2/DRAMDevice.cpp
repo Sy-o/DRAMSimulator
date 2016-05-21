@@ -1,11 +1,13 @@
 #include "DRAMDevice.h"
 #include "MemoryController.h"
 #include "SystemConfiguration.h"
+#include "Parsing.h"
+#include <vector>
 
 using namespace std;
 using namespace DRAMSim;
 
-DRAMDevice::DRAMDevice(MemoryController *mc)
+DRAMDevice::DRAMDevice(MemoryController *mc, string faultFilePath)
 :faultController(this)
 {
 	currentClockCycle = 0;
@@ -19,6 +21,11 @@ DRAMDevice::DRAMDevice(MemoryController *mc)
 		ranks->push_back(r);
 	}
 	discharger.Initialize();
+	if (!faultFilePath.empty())
+	{
+		vector<Fault> faults = ParseCSV(faultFilePath);
+		faultController.SetFaults(faults);
+	}
 }
 
 DRAMDevice::~DRAMDevice()
@@ -42,8 +49,8 @@ void DRAMDevice::update()
 	}
 
 	/*if (currentClockCycle == 2500)
-		(*ranks)[0].banks[0].writeBit(0, 0, 1, true);
-	if (currentClockCycle == 2501)
+		(*ranks)[0].banks[0].writeBit(Address(1, true), true);*/
+	/*if (currentClockCycle == 2501)
 		(*ranks)[0].banks[0].writeBit(0, 0, 3, true);
 	if (currentClockCycle == 2502)
 		(*ranks)[0].banks[0].writeBit(0, 0, 6, true);*/
@@ -60,12 +67,12 @@ void DRAMDevice::step()
 
 void DRAMDevice::receiveFromBus(BusPacket *packet)
 {
-	//if (packet->busPacketType == DATA)
-	//{
-	//	//do some faults
-	//	delete packet;
-	//}
-	//else
+	if (packet->busPacketType == DATA)
+	{
+		faultController.DoFaults(packet->address, packet->data->getData());
+		(*ranks)[packet->address.rank].receiveFromBus(packet);
+	}
+	else
 	{
 		(*ranks)[packet->address.rank].receiveFromBus(packet);
 	}
@@ -76,14 +83,21 @@ uint16_t DRAMDevice::read(Address addr)
 	return (*ranks)[addr.rank].banks[addr.bank].read(addr);
 }
 
-void DRAMDevice::write(Address addr, uint16_t data)
+uint16_t DRAMDevice::readBit(Address addr)
 {
-	(*ranks)[addr.rank].banks[addr.bank].write(addr, data);
+	return (read(addr) & (1 << addr.bit)) ? 1 : 0;
+}
+
+void DRAMDevice::write(Address addr, uint16_t data)
+{	
+	faultController.DoFaults(addr, data);
 }
 
 void DRAMDevice::invertBit(Address addr)
 {
-	(*ranks)[addr.rank].banks[addr.bank].invertBit(addr);
+	uint16_t oldBitValue = readBit(addr);
+	uint16_t newBitValue = oldBitValue ? 0 : 1;
+	faultController.DoOperationOnBit(addr, newBitValue, oldBitValue);
 }
 
 void DRAMDevice::setRefreshWaitingFlag(int rank)

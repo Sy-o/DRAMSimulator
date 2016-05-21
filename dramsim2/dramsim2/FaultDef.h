@@ -7,7 +7,8 @@ enum FaultType
 	TF,
 	CFin,
 	CFid,
-	CFst
+	CFst,
+	AF
 };
 
 struct Fault
