@@ -10,15 +10,14 @@ MarchTestController::MarchTestController()
 MarchTestController::~MarchTestController()
 {}
 
-void MarchTestController::Initialize(int marchTest, DRAMDevice* dram)
+void MarchTestController::Initialize(DRAMDevice* dram)
 {
-	phases.clear();
 	dramDevice = dram;
-	InitMarchTest(marchTest);
 }
 
-void MarchTestController::InitMarchTest(int marchTest)
+void MarchTestController::SetMarchTest(int marchTest)
 {
+	phases.clear();
 	switch (marchTest)
 	{
 	case MARCH_C_MINUS:

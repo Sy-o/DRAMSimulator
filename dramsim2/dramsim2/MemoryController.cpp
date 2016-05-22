@@ -44,7 +44,7 @@
 
 using namespace DRAMSim;
 
-MemoryController::MemoryController(MemorySystem *parent, std::ofstream *outfile) :
+MemoryController::MemoryController(MemorySystem *parent, std::ofstream *outfile, int refreshPeriodShift, string marchTest) :
 commandQueue(CommandQueue(bankStates)),
 poppedBusPacket(NULL),
 totalTransactions(0),
@@ -56,7 +56,7 @@ colBitWidth(dramsim_log2(NUM_COLS)),
 // this forces the alignment to the width of a single burst (64 bits = 8 bytes = 3 address bits for DDR parts)
 byteOffsetWidth(dramsim_log2((JEDEC_DATA_BUS_BITS / 8))),
 refreshRank(0),
-shiftedRefreshMarker(0) //-1300 - half of REFRESH cycle. Don't set market more then 2600!!! (too long running)
+shiftedRefreshMarker(-refreshPeriodShift) //-1300 - half of REFRESH cycle. Don't set market more then 2600!!! (too long running)
 {
 	//get handle on parent
 	parentMemorySystem = parent;
@@ -101,6 +101,8 @@ shiftedRefreshMarker(0) //-1300 - half of REFRESH cycle. Don't set market more t
 	{
 		refreshCountdown.push_back((int)((REFRESH_PERIOD / tCK) / NUM_RANKS)*(i + 1));
 	}
+
+	regenerationController.SetMarchTest(marchTest);
 }
 
 //get a bus packet from either data or cmd bus

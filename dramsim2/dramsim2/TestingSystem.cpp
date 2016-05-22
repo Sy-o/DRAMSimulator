@@ -25,7 +25,7 @@ void TestingSystem::Initialize()
     string deviceIniFilename = "ini/DDR2_micron_1Mb.ini";
     unsigned megsOfMemory = 1; //1 Mb
 
-    memory = new MemorySystem(0, deviceIniFilename, systemIniFilename, "", "SimulationResults.txt", megsOfMemory, "faults.csv");
+    memory = new MemorySystem(0, deviceIniFilename, systemIniFilename, "", "SimulationResults.txt", megsOfMemory, 0, "MATS", "faults02.csv");
 
     ReadDataCB *read_cb = new Callback<TestingSystem, void, uint64_t, uint16_t, size_t>(this, &TestingSystem::read_complete);
     TransactionCompleteCB *write_cb = new Callback<TestingSystem, void, unsigned, uint64_t, uint64_t>(this, &TestingSystem::write_complete);

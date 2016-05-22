@@ -20,8 +20,34 @@ void RegenerationController::Initialize(DRAMDevice* dram)
     refreshEndCycle = 0;
 	startMarchTestCycle = 0;
 	saodcController.SetDRAMDevice(dram);
-	marchController.Initialize(MATS, dram);
+	marchController.Initialize(dram);
 	needTest = false;
+}
+
+void RegenerationController::SetMarchTest(string marchTest)
+{
+	marchController.SetMarchTest(GetMarchTestType(marchTest));
+}
+
+int RegenerationController::GetMarchTestType(string marchTest)
+{
+	if (marchTest.compare("March C-") == 0)
+		return MARCH_C_MINUS;
+	if (marchTest.compare("March A") == 0)
+		return MARCH_A;
+	if (marchTest.compare("March B") == 0)
+		return MARCH_B;
+	if (marchTest.compare("March X") == 0)
+		return MARCH_X;
+	if (marchTest.compare("March Y") == 0)
+		return MARCH_Y;
+	if (marchTest.compare("MATS") == 0)
+		return MATS;
+	if (marchTest.compare("MATS+") == 0)
+		return MATS_PLUS;
+	if (marchTest.compare("MATS++") == 0)
+		return MATS_PLUS_PLUS;
+	return MATS;
 }
 
 void RegenerationController::StartRefresh()

@@ -38,7 +38,9 @@ public:
 	~MarchTestController();
 
 public:
-	void Initialize(int marchTest, DRAMDevice* dram);
+	void Initialize(DRAMDevice* dram);
+	void SetMarchTest(int marchTest);
+
 	void RunTest(int refSignature);
 	void Update();
 	bool TestCompleted();
@@ -47,7 +49,6 @@ public:
 
 private:
 	void RunElement(int element, int address, uint16_t &buffer, uint16_t& oldValue);
-	void InitMarchTest(int marchTest);
 
 private:
 	AddressTranslator addrTranslator;

@@ -16,8 +16,12 @@ public:
 public:
 	void Initialize(DRAMDevice* dram);
 	void UpdateRefSignature(DRAMSim::BusPacket* packet);
+	void SetMarchTest(string marchTest);
 	void StartRefresh();
 	void update();
+
+private:
+	int GetMarchTestType(string marchTest);
 		
 private:
 	MarchTestController marchController;

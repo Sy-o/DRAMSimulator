@@ -64,7 +64,7 @@ class MemoryController : public SimulatorObject
 
 public:
 	//functions
-	MemoryController(MemorySystem* ms, std::ofstream *outfile);
+	MemoryController(MemorySystem* ms, std::ofstream *outfile, int refreshPeriodShift = 0, string marchTest = "");
 	virtual ~MemoryController();
 
 	bool addTransaction(Transaction &trans);

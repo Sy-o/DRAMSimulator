@@ -62,7 +62,7 @@ ofstream dramsim_log;
 powerCallBack_t MemorySystem::ReportPower = NULL;
 
 MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemIniFilename, string pwd,
-	string traceFilename, unsigned int megsOfMemory, string fualtFilePath) :
+	string traceFilename, unsigned int megsOfMemory, int refreshPeriodShift, string marchTest, string fualtFilePath) :
 		ReturnReadData(NULL),
 		WriteDataDone(NULL),
 		systemID(0),
@@ -90,9 +90,6 @@ MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemI
 			systemIniFilename = pwd + "/" + systemIniFilename;
 		}
 	}
-
-
-
 
 	DEBUG("== Loading device model file '"<<deviceIniFilename<<"' == ");
 	IniReader::ReadIniFile(deviceIniFilename, false);
@@ -169,7 +166,7 @@ MemorySystem::MemorySystem(unsigned id, string deviceIniFilename, string systemI
 
 	Address::InitTranslator();
 
-	memoryController = new MemoryController(this, &visDataOut);
+	memoryController = new MemoryController(this, &visDataOut, refreshPeriodShift, marchTest);
 	dramDevice = new DRAMDevice(memoryController, fualtFilePath);
 
 	memoryController->attachDRAMDevice(dramDevice);

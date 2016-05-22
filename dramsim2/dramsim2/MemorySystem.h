@@ -53,7 +53,7 @@ class MemorySystem : public SimulatorObject
 {
 public:
 	//functions
-	MemorySystem(unsigned id, string dev, string sys, string pwd, string trc, unsigned megsOfMemory, string fualtFilePath = "");
+	MemorySystem(unsigned id, string dev, string sys, string pwd, string trc, unsigned megsOfMemory, int refreshPeriodShift = 0, string marchTest = "",string fualtFilePath = "");
 	virtual ~MemorySystem();
 	void update();
 	bool addTransaction(Transaction &trans);
