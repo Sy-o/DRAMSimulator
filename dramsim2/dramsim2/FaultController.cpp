@@ -1,10 +1,9 @@
 #include "FaultController.h"
-#include "SystemConfiguration.h"
 #include "DRAMDevice.h"
 #include <algorithm>
 using namespace std;
 
-FaultController::FaultController(DRAMDevice* dram) : bitWidth(dramsim_log2(DEVICE_WIDTH)), dramDevice(dram)
+FaultController::FaultController(DRAMDevice* dram) : dramDevice(dram)
 {
 }
 
@@ -44,27 +43,12 @@ bool FaultController::IsFaulty(int address)
 bool FaultController::IsAgressor(int address)
 {
 	auto it = find_if(faultyCells.begin(), faultyCells.end(), 
-		[address](Fault f){return f.agressorAddress == address && f.type != AF; });
-	return it != faultyCells.end();
-}
-
-bool FaultController::HasAFFault(int address)
-{
-	address >>= bitWidth;// replace bit part
-	auto it = find_if(faultyCells.begin(), faultyCells.end(),
-		[address, this](Fault f){return f.type == AF && (f.agressorAddress >> bitWidth) == address; });
+		[address](Fault f){return f.agressorAddress == address; });
 	return it != faultyCells.end();
 }
 
 void FaultController::DoFaults(Address addr, uint16_t data)
 {
-	if (HasAFFault(addr.GetPhysical()))
-	{
-		Fault f = GetCellAttributes(addr.GetPhysical(), true, true);
-		Address v(f.victimAddress, true);
-		(*dramDevice->ranks)[v.rank].banks[v.bank].write(v, data);
-	}
-	
 	uint16_t oldData = dramDevice->read(addr);
 	uint16_t bitMask = oldData ^ data;
 	
@@ -145,6 +129,12 @@ void FaultController::DoOperationOnBit(Address address, uint16_t newVal, uint16_
 						 }
 						 break;
 			}
+			case AF:
+			{
+					   Address vicAdr(fault.victimAddress, true);
+					   WriteBit(vicAdr, newVal);
+					   break;
+			}
 			default :
 				break;
 			}
@@ -157,22 +147,16 @@ void FaultController::DoOperationOnBit(Address address, uint16_t newVal, uint16_
 	}	
 }
 
-Fault FaultController::GetCellAttributes(int address, bool isAgressor, bool isAF)
+Fault FaultController::GetCellAttributes(int address, bool isAgressor)
 {
 	vector<Fault>::iterator it;
 	if (isAgressor)
 	{
-		if (isAF)
-		{
-			address >>= bitWidth;
-			it = find_if(faultyCells.begin(), faultyCells.end(), [address, this](Fault f){return (f.agressorAddress >> bitWidth) == address; });
-		}
-		else
-			it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.agressorAddress == address; });
+		it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.agressorAddress == address; });
 	}
 	else
 	{
-		it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.victimAddress == address; });
+		it = find_if(faultyCells.begin(), faultyCells.end(), [address](Fault f){return f.victimAddress == address && f.type != AF; });
 	}
 	if (it != faultyCells.end())
 		return *it;

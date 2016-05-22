@@ -20,11 +20,10 @@ public:
 	void SetFaults(std::vector<Fault>& faults);
 	bool IsFaulty(int address);
 	bool IsAgressor(int address);
-	bool HasAFFault(int address);
 	void DoFaults(Address addr, uint16_t data);
 	void DoOperationOnBit(Address addr, uint16_t newVal, uint16_t oldVal);
 
-	Fault GetCellAttributes(int address, bool isAgressor, bool isAF = false);
+	Fault GetCellAttributes(int address, bool isAgressor);
 
 private:
 	void WriteBit(Address address, int val);
@@ -34,5 +33,4 @@ private:
 	DRAMSim::DRAMDevice* dramDevice;
 	AddressTranslator translator;
 	std::vector<Fault> faultyCells;
-	const int bitWidth;
 };
