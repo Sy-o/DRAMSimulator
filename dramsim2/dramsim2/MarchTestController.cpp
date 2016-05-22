@@ -36,7 +36,6 @@ void MarchTestController::InitMarchTest(int marchTest)
 					phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
 					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
 					phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
-					phases.push_back({ MD_BOTH, { MO_RD } });
 					break;
 	}
 	case MARCH_A:
@@ -45,7 +44,6 @@ void MarchTestController::InitMarchTest(int marchTest)
 					phases.push_back({ MD_UP, { MO_RDC, MO_WD, MO_WDC } });
 					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD, MO_WDC, MO_WD } });
 					phases.push_back({ MD_DOWN, { MO_RD, MO_WDC, MO_WD } });
-					phases.push_back({ MD_BOTH, { MO_RD } });
 					break;
 	}
 	case MARCH_X:
@@ -64,15 +62,14 @@ void MarchTestController::InitMarchTest(int marchTest)
 	}
 	case MATS:
 	{
-					phases.push_back({ MD_BOTH, { MO_RD, MO_WDC } });
-					phases.push_back({ MD_BOTH, { MO_RDC, MO_WD } });
+					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
+					phases.push_back({ MD_DOWN, { MO_RDC } });
 					break;
 	}
 	case MATS_PLUS:
 	{
 					phases.push_back({ MD_UP, { MO_RD, MO_WDC } });
 					phases.push_back({ MD_DOWN, { MO_RDC, MO_WD } });
-					phases.push_back({ MD_BOTH, { MO_RD } });
 					break;
 	}
 	case MATS_PLUS_PLUS:
@@ -122,9 +119,10 @@ void MarchTestController::Update()
 	for (int addr = addrStart; addr >= bottom && addr <= top; addr += counter)
 	{
 		uint16_t buffer = 0;
+		uint16_t old = 0;
 		for (auto& el : phase.elements)
 		{
-			RunElement(el, addr, buffer);
+			RunElement(el, addr, buffer, old);
 		}
 	}
 
@@ -143,7 +141,7 @@ void MarchTestController::Update()
 	}
 }
 
-void MarchTestController::RunElement(int element, int address, uint16_t &buffer)
+void MarchTestController::RunElement(int element, int address, uint16_t &buffer, uint16_t& oldValue)
 {
 	Address addr(address, false);
 	uint16_t data = 0;
@@ -169,7 +167,8 @@ void MarchTestController::RunElement(int element, int address, uint16_t &buffer)
 	//convertData
 	if (element == MO_RD || element == MO_RDC)
 	{
-		saodc.UpdateTestSig(addr, data);
+		saodc.UpdateTestSig(addr, data ^ oldValue);
+		oldValue = data;
 	}
 }
 

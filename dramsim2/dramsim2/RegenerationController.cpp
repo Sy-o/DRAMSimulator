@@ -20,44 +20,45 @@ void RegenerationController::Initialize(DRAMDevice* dram)
     refreshEndCycle = 0;
 	startMarchTestCycle = 0;
 	saodcController.SetDRAMDevice(dram);
-	marchController.Initialize(MARCH_C_MINUS, dram);
+	marchController.Initialize(MATS, dram);
 	needTest = false;
 }
 
 void RegenerationController::StartRefresh()
 {
-    refreshEndCycle = currentClockCycle + tRFC - 1;
+	lastError = 1;//remove
+	refreshEndCycle = currentClockCycle + tRFC - 1;
     int err = saodcController.CalculateTestAndCompare();
- //   if (err)
-	//{
- //       std::cout << "[Regeneration Controller] Detected error(s) in memory.\n      Signature Sum = " << err << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << std::endl;
- //       if (lastError)
- //       {
- //           needTest = true;
- //           startMarchTestCycle = currentClockCycle + 1;
- //       }
- //       else
- //       {
-	//		if (saodcController.ParityBitInZero(err))
-	//		{
-	//			//multiple errors
-	//			needTest = true;
-	//			startMarchTestCycle = currentClockCycle + 1;
-	//		}
-	//		else
-	//		{
-	//			//if it first time - let's decide that it was 1 error. Invert bit
-	//			lastError = err;
-	//			std::cout << "[Regeneration Controller] Try to restore the damaged cell." << std::endl;
-	//			Address addr(err >> 1, true);
-	//			dramDevice->invertBit(addr);
-	//		}
- //       }		
-	//}
- //   else
- //   {
- //       lastError = 0;
- //   }
+    if (/*err*/1)
+	{
+        std::cout << "[Regeneration Controller] Detected error(s) in memory.\n      Signature Sum = " << err << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << std::endl;
+        if (lastError)
+        {
+            needTest = true;
+            startMarchTestCycle = currentClockCycle + 1;
+        }
+        else
+        {
+			if (saodcController.ParityBitInZero(err))
+			{
+				//multiple errors
+				needTest = true;
+				startMarchTestCycle = currentClockCycle + 1;
+			}
+			else
+			{
+				//if it first time - let's decide that it was 1 error. Invert bit
+				lastError = err;
+				std::cout << "[Regeneration Controller] Try to restore the damaged cell." << std::endl;
+				Address addr(err >> 1, true);
+				dramDevice->invertBit(addr);
+			}
+        }		
+	}
+    else
+    {
+        lastError = 0;
+    }
 }
 
 void RegenerationController::update()

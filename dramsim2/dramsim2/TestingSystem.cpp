@@ -41,12 +41,15 @@ void TestingSystem::start()
 {
     deque<Trans> transactions;
    
-	transactions.push_back(Trans(false, 2));
-	transactions.push_back(Trans(true, 2, 127));
-	transactions.push_back(Trans(false, 2));
-	transactions.push_back(Trans(true, 4, 4));
-	transactions.push_back(Trans(false, 4));
-	transactions.push_back(Trans(false, 2));
+	//transactions.push_back(Trans(false, 2));
+	//transactions.push_back(Trans(true, 10, 128));
+	//transactions.push_back(Trans(false, 2));
+	//transactions.push_back(Trans(true, 2, 127));
+	//transactions.push_back(Trans(false, 2));
+	/*transactions.push_back(Trans(true, 4, 4));
+	transactions.push_back(Trans(false, 4));*/
+	/*transactions.push_back(Trans(true, 2, 128));
+	transactions.push_back(Trans(false, 2));*/
     for (size_t i = 0; i < numCycles; i++)
     {
 		//if (!(i % 500))

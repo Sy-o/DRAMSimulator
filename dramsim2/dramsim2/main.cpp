@@ -11,7 +11,7 @@
 int main(int argc, char **argv)
 {
     // TraceBasedStart(argc, argv);
-    TestingSystem system_(5600);
+    TestingSystem system_(2700);
     system_.start();
     //_CrtDumpMemoryLeaks();
     system("pause");

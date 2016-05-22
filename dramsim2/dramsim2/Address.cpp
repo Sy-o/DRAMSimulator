@@ -10,6 +10,7 @@ Address::Address(int r, int b, int row, int col, int bit)
 
 Address::Address(int address, bool full)
 {
+	Clear();
 	if (full)
 		translator.Translate(address, rank, bank, row, col, bit);
 	else

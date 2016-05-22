@@ -46,7 +46,7 @@ public:
 	void Reset();
 
 private:
-	void RunElement(int element, int address, uint16_t &buffer);
+	void RunElement(int element, int address, uint16_t &buffer, uint16_t& oldValue);
 	void InitMarchTest(int marchTest);
 
 private:
