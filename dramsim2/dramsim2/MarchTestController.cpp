@@ -96,6 +96,8 @@ void MarchTestController::Update()
 
     saodc.ClearTestSig();
 
+	std::map<int, SAODCController> signaturesMap;
+
 	MarchPhase& phase = phases[state.phase];
 
 	int addrStart = 0;
@@ -117,15 +119,15 @@ void MarchTestController::Update()
 
 	for (int addr = addrStart; addr >= bottom && addr <= top; addr += counter)
 	{
+		int readOperationNum = 0;
 		uint16_t buffer = 0;
-		uint16_t old = 0;
 		for (auto& el : phase.elements)
 		{
-			RunElement(el, addr, buffer, old);
+			RunElement(el, addr, buffer, readOperationNum, signaturesMap);
 		}
 	}
 
-	int err = saodc.GetSignaturesSum();
+	int err = PhasePassed(signaturesMap);
 	if (err)
 	{
 		state.testPassed = false;
@@ -140,7 +142,28 @@ void MarchTestController::Update()
 	}
 }
 
-void MarchTestController::RunElement(int element, int address, uint16_t &buffer, uint16_t& oldValue)
+int MarchTestController::PhasePassed(std::map<int, SAODCController>& signatures)
+{
+	int i = 0;
+	for (auto& s : signatures)
+	{
+		if (i > 0)
+		{
+			s.second.SetRefSignature(signatures[0].GetTestSignature());
+		}
+		else
+		{
+			s.second.SetRefSignature(saodc.GetRefSignature());
+		}
+		int sigSum = s.second.GetSignaturesSum();
+		if (sigSum)
+			return sigSum;
+		i++;
+	}
+	return 0;
+}
+
+void MarchTestController::RunElement(int element, int address, uint16_t &buffer, int& readOperationNum, std::map<int, SAODCController>& signatures)
 {
 	Address addr(address, false);
 	uint16_t data = 0;
@@ -166,9 +189,10 @@ void MarchTestController::RunElement(int element, int address, uint16_t &buffer,
 	//convertData
 	if (element == MO_RD || element == MO_RDC)
 	{
-		saodc.UpdateTestSig(addr, data ^ oldValue);
-		oldValue = data;
+		signatures[readOperationNum].UpdateTestSig(addr, data);
+		readOperationNum++;
 	}
+	
 }
 
 bool MarchTestController::TestCompleted()

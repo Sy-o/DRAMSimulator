@@ -47,13 +47,6 @@ void DRAMDevice::update()
 	{
 		(*ranks)[i].update();
 	}
-
-	/*if (currentClockCycle == 2500)
-		(*ranks)[0].banks[0].writeBit(Address(1, true), true);*/
-	/*if (currentClockCycle == 2501)
-		(*ranks)[0].banks[0].writeBit(0, 0, 3, true);
-	if (currentClockCycle == 2502)
-		(*ranks)[0].banks[0].writeBit(0, 0, 6, true);*/
 }
 
 void DRAMDevice::step()

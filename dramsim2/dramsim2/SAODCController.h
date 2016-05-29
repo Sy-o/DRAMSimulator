@@ -25,6 +25,7 @@ public:
 	void ClearTestSig();
 	void SetRefSignature(int signature);
 	int GetTestSignature();
+	int GetRefSignature();
 
 private:
     // function calculates address sum of each changed bit in word

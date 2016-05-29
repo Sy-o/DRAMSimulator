@@ -110,6 +110,11 @@ int SAODCController::GetTestSignature()
 	return TestSignature;
 }
 
+int SAODCController::GetRefSignature()
+{
+	return RefSignature;
+}
+
 void SAODCController::AddParityBit(int &address)
 {
 	address <<= 1;

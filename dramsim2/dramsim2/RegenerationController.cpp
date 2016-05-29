@@ -52,13 +52,12 @@ int RegenerationController::GetMarchTestType(string marchTest)
 
 void RegenerationController::StartRefresh()
 {
-	lastError = 1;//remove
 	refreshEndCycle = currentClockCycle + tRFC - 1;
     int err = saodcController.CalculateTestAndCompare();
-    if (/*err*/1)
+    if (/*err*/true)
 	{
         std::cout << "[Regeneration Controller] Detected error(s) in memory.\n      Signature Sum = " << err << "(" << addrTranslator.GetDescription(err>>1, true) << ")" << std::endl;
-        if (lastError)
+        if (/*lastError*/ true)
         {
             needTest = true;
             startMarchTestCycle = currentClockCycle + 1;

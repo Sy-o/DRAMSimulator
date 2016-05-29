@@ -6,6 +6,7 @@
 #include "SAODCController.h"
 #include "MarchDef.h"
 #include <vector>
+#include <map>
 
 class MarchTestController
 {
@@ -48,7 +49,8 @@ public:
 	void Reset();
 
 private:
-	void RunElement(int element, int address, uint16_t &buffer, uint16_t& oldValue);
+	void RunElement(int element, int address, uint16_t &buffer, int& readOperationNum, std::map<int, SAODCController>& signatures);
+	int PhasePassed(std::map<int, SAODCController>& signatures);
 
 private:
 	AddressTranslator addrTranslator;
